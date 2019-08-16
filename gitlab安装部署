@@ -1,0 +1,166 @@
+gitlab 和jenkins的安装部署
+
+1.gitlab的安装
+安装依赖 和环境准备
+sudo yum install -y curl policycoreutils-python openssh-server
+sudo systemctl enable sshd
+sudo systemctl start sshd
+sudo firewall-cmd --permanent --add-service=http
+sudo systemctl reload firewalld
+
+
+sudo yum install postfix
+sudo systemctl enable postfix
+sudo systemctl start postfix
+
+
+添加源
+curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.rpm.sh | sudo bash
+
+yum install -y gitlab-ee
+
+sudo gitlab-ctl reconfigure #Configure and start GitLab
+
+配置域名： vim /var/opt/gitlab/nginx/conf/gitlab-http.conf
+# 外网访问的端口，如果服务器已经有服务器占用了80，那么这里可以改成其它
+listen *:8888;
+server_name gitlab.test.domain.com;
+set $http_host_with_default "gitlab.test.domain.com:8888"
+补充说明：因为编译gitlab的配置 /etc/gitlab/gitlab.rb 时会重新生成这个自定义nginx 配置，所以只要 gitlab 的配置配得好，上面的nginx其实不需要自定义的
+
+修改密码
+gitlab-rails console production
+user = User.where(id:1).first
+user.password='123456'
+user.save!
+
+GitLab备份和恢复
+# 可以将此命令写入crontab，以实现定时备份
+/usr/bin/gitlab-rake gitlab:backup:create
+备份的数据会存储在/var/opt/gitlab/backups，用户通过自定义参数 gitlab_rails['backup_path']，改变默认值。
+
+恢复
+# 停止unicorn和sidekiq，保证数据库没有新的连接，不会有写数据情况
+sudo gitlab-ctl stop unicorn
+sudo gitlab-ctl stop sidekiq
+# 进入备份目录进行恢复，1476900742为备份文件的时间戳
+cd /var/opt/gitlab/backups
+gitlab-rake gitlab:backup:restore BACKUP=1476900742
+cd -
+    
+ # 启动unicorn和sidekiq
+sudo gitlab-ctl start unicorn
+sudo gitlab-ctl start sidekiq
+ GitLab配置文件修改
+ vim /etc/gitlab/gitlab.rb
+ gitlab基本配置:
+#外部访问url（经过编译后，自动将这个配置编译到nginx配置，nginx就无需配置了）
+external_url 'http://gitlab.test.domain.com:8888'
+#默认值就是8080。如果端口被占用，可将8080修改为其它（例如：9090）
+unicorn['port'] = 8080
+
+gitlab发送邮件配置
+   
+gitlab_rails['smtp_enable'] = true  
+gitlab_rails['smtp_address'] = “smtp.exmail.qq.com”  
+gitlab_rails['smtp_port'] = 25  
+gitlab_rails['smtp_user_name'] = “huangdc@domain.com“  
+gitlab_rails['smtp_password'] = "smtp password"  
+gitlab_rails['smtp_authentication']= “plain"  
+gitlab_rails['smtp_enable_starttls_auto']= true  
+gitlab_rails['gitlab_email_from']= 'huangdc@domain.com'  
+gitlab_rails['gitlab_email_reply_to']= ‘noreply@domain.com' 
+
+服务器修改过ssh端口的坑(需要修改配置ssh端口)
+
+#修改过ssh端口，gitlab中项目的的ssh地址，会在前面加上协议头和端口号“ssh://git@gitlab.domain.com:55725/huangdc/test.git”
+ gitlab_rails['gitlab_shell_ssh_port'] = 55725
+
+#使配置生效
+ gitlab-ctl reconfigure
+ #重新启动GitLab 
+ gitlab-ctl restart 
+GitLab常用命令
+gitlab-ctl start    # 启动所有 gitlab 组件；
+gitlab-ctl stop        # 停止所有 gitlab 组件；
+gitlab-ctl restart        # 重启所有 gitlab 组件；
+gitlab-ctl status        # 查看服务状态；
+vim /etc/gitlab/gitlab.rb        # 修改gitlab配置文件；
+gitlab-ctl reconfigure        # 重新编译gitlab的配置；
+gitlab-rake gitlab:check SANITIZE=true --trace    # 检查gitlab；
+gitlab-ctl tail        # 查看日志；
+gitlab-ctl tail nginx/gitlab_access.log
+
+执行 reconfigure 命令会把gitlab的nginx组件的配置还原，导致自定义修改的端口以及域名等都没有了
+常用目录
+日志地址：/var/log/gitlab/   # 对应各服务的打印日志 
+服务地址：/var/opt/gitlab/   # 对应各服务的主目录 
+查看gitlab版本
+cat /opt/gitlab/embedded/service/gitlab-rails/VERSION
+
+新建项目会在这个目录下生成对应的文件
+/var/opt/gitlab/git-data/repositories/root/
+
+gitlab的使用
+ssh -T -p 55725 git@gitlab.domain.com
+以上这条 ssh 命令测试通过，未必代表就能 git clone 代码，git clone 代码需要执行命令的账户有写权限，如果是普通用户用 sudo git clone 那么 git 就会使用的 root 账号的 Private Key
+.登录
+管理员会为使用者开通账号并设置权限。
+使用者在客户端生成ssh key
+ssh-keygen -t rsa -C "huangdc@domain.com"
+将公钥的内容copy到gitlab用户设置里面的“SSH Keys”
+Windows:  clip < ~/.ssh/id_rsa.pub
+Mac:  pbcopy < ~/.ssh/id_rsa.pub
+GNU/Linux (requires xclip):  xclip -sel clip < ~/.ssh/id_rsa.pub
+4.测试ssh连接
+#标准测试代码：ssh -T git@gitlab.com
+ssh -T -p 55725 git@gitlab.domain.com  #修改过端口号的测试代码
+
+如果连接成功的话，会出现以下信息:
+    Welcome to GitLab, huangdc!
+
+说明：实际上执行这条ssh命令，所使用的远程服务器的用户是git，这个用户是在安装gitlab的时候生成的，所有使用gitlab服务器的ssh客户端，都是使用git这个用户。在这里的用户“huangdc”是通过gitlab创建的，是用于gitlab的权限管理，也用作标识提交代码的开发者信息，不要跟ssh的用户混淆了。
+如何使用多个SSH公钥（自己电脑在使用多个代码仓库）
+原理其实是：因为每个仓库都需要 ssh 连接，而 ssh 命令默认是使用 .ssh 目录下面的私钥去连接代码仓库，所以我们可以在 .ssh/config 目录里面针对不同的仓库域名重定义它的私钥。
+例子如下：
+编辑文件: vim /Users/david/.ssh/config
+    Host            gitlab.domain.com    
+    IdentityFile    /Users/david/.ssh/id_rsa    
+
+命令行环境下初始化项目
+
+首先在 gitlab 上面创建一个空的代码仓库，得到仓库地址如下：
+
+    ssh://git@gitlab.domain.com:55725/huangdc/test.git
+
+
+在本地初始化仓库、提交代码、推送到远程 master 分支。
+
+    git clone ssh://git@gitlab.domain.com:55725/huangdc/test.git  
+    cd test  
+    touch README.md
+    git add README.md
+    git commit -m "add README"
+    git push -u origin master
+
+命令行环境下迁移旧的项目
+
+首先在 gitlab 上面创建一个空的代码仓库，得到仓库地址如下：
+
+    #注意：已存在代码的旧项目只能推送到空的远程代码仓库
+    ssh://git@gitlab.domain.com:55725/dev/memberApi.git     
+
+
+本地初始化项目、关联远程仓库、推送到远程仓库
+
+ cd /Users/david/work_www/memberApi
+ git init
+ git remote add origin ssh://git@gitlab.domain.com:55725/dev/memberApi.git
+ git push -u origin master
+
+SourceTree的安装和打开
+
+官网下载链接：https://www.sourcetreeapp.com/
+
+打开SourceTree之后，需要登录Atlassian账号来激活SourceTree。可以使用Google账号直接关联登录。
+登录后还需要一些设置，以最简单的方式跳过就行。
