@@ -1,0 +1,36 @@
+jenkins 安装
+
+java环境的安装
+jenkins 的运行基于java环境的先安装Java 8 or Java 11
+yum search openjdk
+yum install java-1.8.0-openjdk.x86_64 -y  
+java -version
+
+jenkins的安装和部署
+
+sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+yum install jenkins -y
+systemctl start jenkins  ##启动jenkins
+systemctl status jenkins ## 设置开机启动
+
+防火墙配置
+firewall-cmd --zone=public --permanent --add-port=8080/tcp
+firewall-cmd --zone=public --permanent --add-service=http
+firewall-cmd --reload
+
+登录到web界面
+默认密码在cat /var/lib/jenkins/secrets/initialAdminPassword
+
+Jenkins只是相当与一个容器，所以的功能都是相应的插件完成的，所以可以根据自己的功能要求安装相依的插件
+
+Gitlab插件：GitLab Plugin 和 Gitlab Hook Plugin
+Git插件： Git plugin
+获取仓库提交的commit log： Git Changelog Plugin
+自定义全局变量: Environment Injector Plugin
+自定义邮件插件： Email Extension Plugin
+获取当前登录用户信息： build-user-vars-plugin
+显示代码测试覆盖率报表： Cobertura Plugin
+来展示生成的单元测试报表，支持一切单测框架，如junit、nosetests等： Junit Plugin
+ssh连接插件：SSH Slaves plugin
+建后执行shell： PostBuildScript plugin
