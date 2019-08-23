@@ -1,5 +1,6 @@
 jenkins 安装
 
+https://www.cnblogs.com/yanjieli/p/10613212.html
 java环境的安装
 jenkins 的运行基于java环境的先安装Java 8 or Java 11
 yum search openjdk
