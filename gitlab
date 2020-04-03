@@ -1,0 +1,178 @@
+gitlab 的安装
+
+安装依赖包
+sudo yum install curl openssh-server openssh-clients postfix cronie
+
+systemctl enable sshd
+systemctl start sshd
+
+firewall-cmd --permanent --add-service=http --zone=public
+
+systemctl reload firewalld
+
+setenforce 0 
+
+vim /etc/selinux/config
+
+
+官网地址下载地址 [https://packages.gitlab.com/gitlab/gitlab-ce](https://packages.gitlab.com/gitlab/gitlab-ce)
+
+curl -s https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash 
+
+sudo yum install gitlab-ce-12.9.2-ce.0.el7.x86_64
+
+三.目录结构
+/opt/gitlab 主目录
+/etc/gitlab 配置文件目录
+/var/log/gitlab 日志目录
+
+修改配置文件
+/etc/gitlab/gitlab.rb
+
+该文件中添加
+external_url 'http://192.168.127.136'
+
+默认nginx 监听的是80 端口，如果nginx 修改端口，external_url 里面也必须带端口
+
+启动gitlab 命令：gitlab-ctl reconfigure && gitlab-ctl start
+然后查看主件的状态gitlab-ctl status
+
+第一次登录使用的用户名和密码为 root 和 5iveL!fe
+gitlab 默认管理用户是root
+
+如果修改了需要使用外部的postgresql ，redis 和nginx需要修改该文件相关参数。
+
+gitlab 启动之后会根据配置文件 定义创建一系列用户 和 他们的家目录
+默认gitlab 依赖的主件安装在/var/opt/gitlab/目录下。
+gitlab 的组件有如下：
+nginx，postgresql，redis，unicorn，sidekiq，logrotate
+
+
+nginx : web入口
+database（postgresql，mysql） （gitlab repository issue，merge request等，用户（权限））
+redis 缓存，负责分发任务
+sideiq：后台任务，主要负责发送电子邮件，任务需要来自redis
+unicorn： 包含gitlab 主进程
+gitlab-shell 用于ssh交互
+gitlab-workhorse：反向代理服务器，可以处理与unicorn 无关的请求，处理git pull／push请求，处理到unicorn 的连接
+gitaly 后台服务，用于处理GitLab发出的所有git调用
+
+
+
+systemctl enable gitlab-runsvdir.service
+systemctl start gitlab-runsvdir.service
+
+gitlab-ctl start #启动全部服务
+gitlab-ctl restart #重启全部服务
+gitlab-ctl stop #停止全部服务
+gitlab-ctl restart nginx #重启单个服务
+gitlab-ctl status #查看全部组件的状态
+gitlab-ctl show-config #验证配置文件
+gitlab-ctl uninstall #删除gitlab(保留数据）
+gitlab-ctl cleanse #删除所有数据，重新开始
+gitlab-ctl tail <svc_name>  #查看服务的日志
+gitlab-rails console production #进入控制台 ，可以修改root 的密码
+
+配置邮箱（例qq企业邮箱）
+编辑配置文件/etc/gitlab/gitlab.rb
+
+gitlab_rails['smtp_enable'] = true
+
+gitlab_rails['smtp_address'] = "smtp.exmail.qq.com"
+
+gitlab_rails['smtp_port'] = 465
+
+gitlab_rails['smtp_user_name'] = "邮箱"
+
+gitlab_rails['smtp_password'] = "密码"
+
+gitlab_rails['smtp_domain'] = "smtp.exmail.qq.com"
+
+gitlab_rails['smtp_authentication'] = "login"
+
+gitlab_rails['smtp_enable_starttls_auto'] = true
+
+gitlab_rails['smtp_tls'] = true
+
+gitlab_rails['gitlab_email_from'] = 'doufeiying@szdxsoft.com'
+
+gitlab_rails['gitlab_email_display_name'] = 'Gitlab'
+
+重启服务
+
+#gitlab-ctl reconfigure
+发送测试邮件
+
+#gitlab-rails console
+#Notify.test_email('1289232530@qq.com','1234','5678').deliver_now
+
+Gitlab 备份
+Gitlab 成功运行起来之后，最终的事情就是定期的备份，遇到问题后的还原
+
+默认 Gitlab 的备份文件会创建在/var/opt/gitlab/backups文件夹中，格式为时间戳_日期_版本号_gitlab_backup.tar，例如：1515031353_2018_01_04_10.3.2_gitlab_backup.tar。
+修改备份文件夹，需要修改配置文件/etc/gitlab/gitlab.rb中的：
+
+gitlab_rails['backup_path'] = '/your_wish/backups'
+
+然后gitlabctl-reconfigure生效
+
+手动备份
+命令：gitlab-rake gitlab:backup:create
+会在命令执行的时间点，在你配置的文件夹或者默认文件夹创建一个备份文件。
+自动备份
+Gitlab 支持 crontab 来创建计划任务，执行命令：sudo crontab -e -u root，为 root 用户，创建并编辑 crontab。
+例如，每周二到周六的早晨创建一个自己命名规则的备份：
+
+15 04 * * 2-6  umask 0077; tar cfz /secret/gitlab/backups/$(date "+etc-gitlab-\%s.tgz") -C / etc/gitlab
+
+恢复备份
+先停止 gitlab 相关服务：
+sudo gitlab-ctl stop unicorn
+sudo gitlab-ctl stop sidekiq
+执行备份恢复命令：
+gitlab-rake gitlab:backup:restore BACKUP=1515031353_2018_01_04_10.3.2
+为了防止有问题，还是需要执行重新配置，用来重新配置和启动：
+gitlab-ctl reconfigure
+
+迁移，及版本不一致问题
+Gitlab 迁移
+Gitlab 的迁移非常简单，只需要在目标服务器上安装好之后，把 Gitlab 的备份文件放到备份目录中，然后执行上一步的恢复备份命令即可。
+
+Gitlab 迁移版本不一致问题
+但是Gitlab 有个不爽的地方就是，不同版本号的备份文件不能相互使用。有时候备份文件是旧版本，安装的时候自动安装了最新版本，这时候备份文件就没办法使用了，怎么办呢？
+
+先卸载掉已经安装的最新版Gitlab：sudo yum remove gitlab-ce
+在 Gitlab package 地址https://packages.gitlab.com/gitlab/gitlab-ce中找到对应操作系统和版本的安装包，例如 CentOS 7，Gitlab 10.3.1对应的是gitlab-ce-10.3.1-ce.0.el7.x86_64.rpm
+执行安装命令
+curl -s https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
+sudo yum install gitlab-ce-10.3.1-ce.0.el7.x86_64 
+
+后重复之前的安装、配置、恢复备份的目录即可。
+
+Gitlab 汉化
+Gitlab中文社区版地址：https://gitlab.com/xhang/gitlab
+克隆版本库
+cd /usr/local/src/
+git clone https://gitlab.com/xhang/gitlab.git
+取当前Gitlab版本
+gitlab_version=$(cat /opt/gitlab/embedded/service/gitlab-rails/VERSION)
+比较汉化标签和原标签，导出patch用的diff文件
+cd /usr/local/src/gitlab
+git diff v${gitlab_version} v${gitlab_version}-zh > ../${gitlab_version}-zh.diff
+先停止gitlab
+gitlab-ctl stop
+导入汉化补丁	
+patch -d /opt/gitlab/embedded/service/gitlab-rails -p1 < ../${gitlab_version}-zh.diff
+如果出现类似以下内容，则按住回车，一直跳过就行了
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/app/assets/javascripts/awards_handler.js b/app/assets/javascripts/awards_handler.js
+|index eb0f06e..73e4833 100644
+|--- a/app/assets/javascripts/awards_handler.js
+|+++ b/app/assets/javascripts/awards_handler.js
+--------------------------
+File to patch:
+然后启动gitlab
+gitlab-ctl start
