@@ -15,7 +15,8 @@ setenforce 0
 vim /etc/selinux/config
 
 
-官网地址下载地址 [https://packages.gitlab.com/gitlab/gitlab-ce](https://packages.gitlab.com/gitlab/gitlab-ce)
+官网地址下载地址 [https://packages.gitlab.com/gitlab/gitlab-ce]
+(https://packages.gitlab.com/gitlab/gitlab-ce)
 
 curl -s https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash 
 
@@ -35,6 +36,12 @@ external_url 'http://192.168.127.136'
 默认nginx 监听的是80 端口，如果nginx 修改端口，external_url 里面也必须带端口
 
 启动gitlab 命令：gitlab-ctl reconfigure && gitlab-ctl start
+在执行gitlab-ctl reconfigure 的时候如果遇到下面问题
+* ruby_block[supervise_redis_sleep] action run卡死不动的解决方法 ctrl+c 强制结束
+运行：sudo systemctl restart gitlab-runsvdir
+再次执行：sudo gitlab-ctl reconfigure
+
+
 然后查看主件的状态gitlab-ctl status
 
 第一次登录使用的用户名和密码为 root 和 5iveL!fe
@@ -106,6 +113,10 @@ gitlab_rails['gitlab_email_display_name'] = 'Gitlab'
 #gitlab-rails console
 #Notify.test_email('1289232530@qq.com','1234','5678').deliver_now
 
+服务器修改过ssh端口的坑(需要修改配置ssh端口)
+    #修改过ssh端口，gitlab中项目的的ssh地址，会在前面加上协议头和端口号“ssh://git@gitlab.domain.com:55725/huangdc/test.git”
+    gitlab_rails['gitlab_shell_ssh_port'] = 55725
+
 Gitlab 备份
 Gitlab 成功运行起来之后，最终的事情就是定期的备份，遇到问题后的还原
 
@@ -156,6 +167,8 @@ cd /usr/local/src/
 git clone https://gitlab.com/xhang/gitlab.git
 取当前Gitlab版本
 gitlab_version=$(cat /opt/gitlab/embedded/service/gitlab-rails/VERSION)
+查看全部分支版本
+git branch -a
 比较汉化标签和原标签，导出patch用的diff文件
 cd /usr/local/src/gitlab
 git diff v${gitlab_version} v${gitlab_version}-zh > ../${gitlab_version}-zh.diff
