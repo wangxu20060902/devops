@@ -1,0 +1,42 @@
+devops 之jdk 和maven 配置
+
+安装jdk
+yum install java-1.8.0-openjdk.x86_64 -y
+配置java环境
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.242.b08-0.el7_7.x86_64
+export JRE_HOME=${JAVA_HOME}/jre
+export CLASSPATH=.:${JAVA_HOME}/lib/:${JRE_HOME}/lib
+export PATH=${JAVA_HOME}/bin:$PATH
+
+安装方式二
+
+首先要去下载好JDK，Java SE 8的官方网址是http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+Linux提供了两种安装方式一个是.rpm，另一个是.tar.gz，我所使用的是.tar.gz
+tar zxvf jdk-8u251-linux-x64.tar.gz
+mv jdk1.8.0_251/ /usr/local/java
+设置环境变量，需要修改/etc/profile文件
+vim /etc/profile
+
+export JAVA_HOME=/usr/local/java
+export JRE_HOME=/usr/local/java/jre
+export CLASSPATH=.:$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH
+export PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$PATH
+使环境变量生效
+source /etc/profile
+查看java 信息
+java -version  
+
+安装maven
+下载maven 安装包
+https://mirrors.tuna.tsinghua.edu.cn/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
+
+解压
+tar zxvf apache-maven-3.6.3-bin.tar.gz
+mv apache-maven-3.6.3 /usr/local/maven
+
+配置环境
+export MAVEN_HOME=/usr/local/maven
+export PATH=$PATH:$MAVEN_HOME/bin
+
+使环境生效
+source /etc/source
