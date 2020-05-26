@@ -36,7 +36,7 @@ Git插件： Git plugin
 ssh连接插件：SSH Slaves plugin
 建后执行shell： PostBuildScript plugin
 
-
+###事先配置好jenkins  configure system>>E-mail Notification  
 ###声明式流水线配置邮件通知
 
 pipeline {
