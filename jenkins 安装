@@ -97,3 +97,56 @@ node('work-node01') {
         body: "${env.BUILD_URL} has result ${currentBuild.result}"
     }  
     }
+
+jenkins  
+
+###########jenkins配置邮件之：	E-mail Notification  
+先到自己的163邮箱里开启授权码
+配置项一：Jenkins Location：
+System Admin e-mail address： wangxu20060902@163.com     ###发件人地址要和此地址保持一致
+配置项二：E-mail Notification：
+SMTP server： smtp.163.com   ###填写smtp服务器地址
+Use SMTP Authentication   ###勾选
+Password： ***************    ###填写授权码（密码根据自己的环境）
+Use SSL      #####勾选
+SMTP Port： 465  ####根据自己情况填写端口
+##其他可以保持默认
+
+###########jenkins配置邮件之：Extended E-mail Notification
+
+SMTP server: smtp.163.com   ###填写smtp服务器地址
+Default user E-mail suffix： @163.com    ###邮件后缀
+use SMTP Authentication     ####勾选
+User Name: wangxu20060902@163.com    ###填写发件邮箱
+Password：  ******************          ###填写授权码
+Use SSL      #####勾选
+SMTP Port： 465  ####根据自己情况填写端口
+Default Recipients:wangxu20060902@163.com  ###填写默认收件人
+Default Content Type： HTML(test/html)
+Default Triggers:   Always    ###此处根据自己的需求勾选
+####其他项可以保持默认######
+#############
+邮件配置完成后需要到对应的项目里配置默认的邮件策略
+jenkins>>${project name}>>configure>>Add post-build action>>Editable Email Notifination(E-mail Notifination)
+Project Recipient List：  $DEFAULT_RECIPIENTS,wangxu20060902@163.com,xu.wang@futuremove.cn   #####填写收件人的地址
+Triggers>>Add Triggers   ###根据自己的需求填写出发条件
+
+###########jenkins配置邮件之：Publish over SSH
+##jenkins 服务器上生成ssh key  执行命令：ssh-keygen  一直回车  
+##配置jenkins 服务器到其他服务器的免密把本地的公钥（即cat /root/.ssh/id_rsa.pub） copy到其他服务的/root/.ssh/authorized_keys
+###jenkins 要安装Publish over SSH 插件
+Key：****************************************   #####此处填写jenkins 服务器的私钥即：
+SSH Servers
+name： ****** ###填写要ssh到的server name
+Hostname： ip address ### 填写要远程ssh的ip 地址
+Username： *****     ####填写要用来远程的用户名
+Port： 22  ### 填写ssh 端口
+######如果又需求可以继续添加要远程发布的服务器
+
+######jenkins 之管理员密码的破解#######
+cd /var/lib/jenkins/users   ###切换到jenkins的users目录下找到对应的用户
+vim ${username}/config.xml   ####编译对应用户的文件因为jenkins的数据没有存到数据库中，找到<passwordHash>#jbcrypt:$2a$10$GrfXcHm/xOTsDmgY6BmdD.OxZd0G94qrNfdCS97HtuCg/MeRoi9Xq</passwordHash>
+对自己经过hash运算后的值进行更换就行了
+systemctl restart jenkins  ###重启jenkins进行验证
+
+#######jenkins 发布java项目########################
