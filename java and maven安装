@@ -39,4 +39,4 @@ export MAVEN_HOME=/usr/local/maven
 export PATH=$PATH:$MAVEN_HOME/bin
 
 使环境生效
-source /etc/source
+source /etc/profile
