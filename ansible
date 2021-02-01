@@ -1,0 +1,137 @@
+*******************ansible *******************
+
+*******************ansible的安装*********************
+#ansible 在centos 7上的安装 
+sudo yum install ansible -y
+
+*****************ansible 的优化**********************
+#ansible的配置文件在
+vim /etc/ansible/ansible.cfg
+
+1.###Ansible SSH 关闭秘钥检测
+host_key_checking = False
+
+2.### OpenSSH连接优化,使用OpenSSH服务时，默认服务器端配置文件UseDNS=YES状态，该选项会导致服务器根据客户端的IP地址进行DNS PTR反向解析得到客户端的主机名，然后根据获取到的主机名进行DNS正向A记录查询，并验证该IP是否与原始IP一致。关闭DNS解析代码如下
+ sed  -i  '/^GSSAPI/s/yes/no/g；/UseDNS/d；/Protocol/aUseDNS no' /etc/ssh/sshd_config
+systemctl reload sshd
+ 
+3.##SSH pipelining加速Ansible SSH pipelining是一个加速 Ansible 执行速度的简单方法，SSH pipelining 默认是关闭的
+ sed    -i    '/^pipelining/s/False/True/g'    /etc/ansible/ansible.cfg
+ 
+
+####SSH　pipelining加速Ansible
+##SSH pipelining是一个加速 ansible 执行速度的简单方法，SSH pipelining默认时关闭的，关闭时为了兼容不同的sudo 配置，主要requiretty 选项。
+#SSH pipelining是一个加速 ansible 执行速度的简单方法，SSH pipelining默认时关闭的，关闭时为了兼容不同的sudo 配置，主要requiretty 选项。
+sed -i '/^pipelining/s/False/True/g' /etc/ansible/ansible.cfg
+
+4.####更改ssh长连接配置
+ sed -i '/^ssh_args/s/60/3600/g' /etc/ansible/ansible.cfg 
+ 
+5.facts 缓存到jsonfile
+ gathering = smart
+ fact_caching = jsonfile
+ fact_caching_connection=/ansible/facts_cache
+ fact_caching_timeout = 86400
+ 
+6.配置facts 配置缓存到redis
+## 在配置文件/etc/ansible/ansible.cfg中defaluts段加入代码，如果redis为admin，则开启admin密码行
+ gathering = smart
+fact_caching = redis
+fact_caching_timeout = 86400
+fact_caching_connection = localhost:6379
+#fact_caching_connection = localhost:6379:0:admin
+
+*****************ansible-tower***********************
+##参考https://www.cnblogs.com/hujinzhong/p/12172903.html
+##现在ansible-tower
+wget https://releases.ansible.com/ansible-tower/setup-bundle/ansible-tower-setup-bundle-3.6.2-1.el7.tar.gz
+tar zxvf ansible-tower-setup-bundle-3.6.2-1.el7.tar.gz -C /usr/local/  && cd /usr/local/ansible-tower-setup-bundle-3.6.2-1
+ls
+backup.yml  bundle  group_vars  install.yml  inventory  licenses  README.md  rekey.yml  restore.yml  roles  setup.sh
+
+vim inventory
+
+[tower]
+localhost ansible_connection=local
+[database]
+[all:vars]
+admin_password='tower'   #tower登录密码
+pg_host=''
+pg_port=''
+pg_database='awx'
+pg_username='awx'
+pg_password='tower'
+pg_sslmode='prefer'  # set to 'verify-full' for client-side enforced SSL
+rabbitmq_username=tower
+rabbitmq_password='tower'
+rabbitmq_cookie=cookiemonster
+
+#启动
+./setup.sh
+#访问地址
+https://192.168.140.141/#/login
+###需要认证：
+
+*******************ansible-tower破解**********************
+cd /var/lib/awx/venv/awx/lib/python3.6/site-packages/tower_license
+
+ll
+
+-rw-r--r-- 1 root root 7764 Dec 14 01:39 __init__.pyc
+drwxr-xr-x 2 root root   37 Jan 12 11:46 __pycache__
+
+wget https://bootstrap.pypa.io/get-pip.py
+python get-pip.py
+pip -V
+pip 20.3.3 from /usr/lib/python2.7/site-packages/pip (python 2.7)
+
+pip install uncompyle6
+
+uncompyle6 __init__.pyc >__init__.py
+
+-rw-r--r-- 1 root root 11502 Jan 12 12:04 __init__.py
+-rw-r--r-- 1 root root  7764 Dec 14 01:39 __init__.pyc
+drwxr-xr-x 2 root root    37 Jan 12 11:46 __pycache__
+
+#修改__init__.py文件
+    def _check_cloudforms_subscription(self):
+        return True    #添加这一行
+        if os.path.exists('/var/lib/awx/i18n.db'):
+            return True
+        else:
+            if os.path.isdir('/opt/rh/cfme-appliance'):
+                if os.path.isdir('/opt/rh/cfme-gemset'):
+                    pass
+            try:
+                has_rpms = subprocess.call(['rpm', '--quiet', '-q', 'cfme', 'cfme-appliance', 'cfme-gemset'])
+                if has_rpms == 0:
+                    return True
+            except OSError:
+                pass
+ 
+            return False
+....
+
+#修改"license_date=253370764800L" 为 "license_date=253370764800"
+    def _generate_cloudforms_subscription(self):
+        self._attrs.update(dict(company_name='Red Hat CloudForms License', instance_count=MAX_INSTANCES,
+          license_date=253370764800,  #修改
+          license_key='xxxx',
+          license_type='enterprise',
+          subscription_name='Red Hat CloudForms License'))
+...
+
+#修改完重新编译一下
+ python -m py_compile __init__.py
+ python -O -m py_compile __init__.py
+ 
+ ll
+ 
+ -rw-r--r-- 1 root root 11521 Jan 12 12:08 __init__.py
+-rw-r--r-- 1 root root  9181 Jan 12 12:08 __init__.pyc
+-rw-r--r-- 1 root root  9181 Jan 12 12:08 __init__.pyo
+drwxr-xr-x 2 root root    37 Jan 12 11:46 __pycache__
+
+ansible-tower-service restart
+
+#访问https://10.0.0.203/#/license
