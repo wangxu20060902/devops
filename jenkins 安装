@@ -42,6 +42,19 @@ Manage Jenkins->Manage Plugins，点击Available，搜索"Chinese"
 安装此插件：	Localization: Chinese (Simplified)
 Manage Jenkins >>> configure system >>>Locale Default Language  : zh_CN    并打勾  Ignore browser preference and force this language to all users
 
+#############jenkins 账号管理插件Role-based Authorization Strategy #######
+
+安装插件Manage Jenkins >>> configure system >>>Role-based Authorization Strategy 
+开启权限管理  Jenkins
+Manage Jenkins >>> Configure Global Security >>>	授权策略  勾选  Role-Based Strategy  就可以使用了
+
+Manage Jenkins >>> Manage and Assign Roles     Manage Roles 管理角色  用来给角色分配权限 分为：
+Global roles 全局角色
+Item roles   项目角色
+Node roles   节点角色
+
+Assign Roles  分配角色  用来给用户分配角色的
+
 
 Jenkins只是相当与一个容器，所以的功能都是相应的插件完成的，所以可以根据自己的功能要求安装相依的插件
 
