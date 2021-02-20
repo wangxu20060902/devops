@@ -23,6 +23,19 @@ firewall-cmd --reload
 登录到web界面
 默认密码在cat /var/lib/jenkins/secrets/initialAdminPassword
 
+###########jenkins国内镜像地址修改###############
+find / -name 'default.json'
+/var/lib/jenkins/updates/default.json
+cd /var/lib/jenkins/updates
+执行 命令
+
+sed -i 's/http:\/\/updates.jenkins-ci.org\/download/https:\/\/mirrors.tuna.tsinghua.edu.cn\/jenkins/g' default.json && sed -i 's/http:\/\/www.google.com/https:\/\/www.baidu.com/g' default.json
+
+点击 jenkins 的系统管理 --> 插件管理，打开插件管理页面，如图：
+Jenkins 欢迎页面点击系统管理，进入系统管理页面，并点击插件管理进入到插件管理页面，如下图：
+在插件管理页面点击高级（Advanced），如下图：
+在高级选项卡找到更新网站（Update Site）菜单项，将默认网站更新为 https://mirrors.tuna.tsinghua.edu.cn/jenkins/updates/update-center.json 并提交
+
 Jenkins只是相当与一个容器，所以的功能都是相应的插件完成的，所以可以根据自己的功能要求安装相依的插件
 
 Gitlab插件：GitLab Plugin 和 Gitlab Hook Plugin
