@@ -36,6 +36,13 @@ Jenkins 欢迎页面点击系统管理，进入系统管理页面，并点击插
 在插件管理页面点击高级（Advanced），如下图：
 在高级选项卡找到更新网站（Update Site）菜单项，将默认网站更新为 https://mirrors.tuna.tsinghua.edu.cn/jenkins/updates/update-center.json 并提交
 
+##############jenkins 汉化########################
+
+Manage Jenkins->Manage Plugins，点击Available，搜索"Chinese"
+安装此插件：	Localization: Chinese (Simplified)
+Manage Jenkins >>> configure system >>>Locale Default Language  : zh_CN    并打勾  Ignore browser preference and force this language to all users
+
+
 Jenkins只是相当与一个容器，所以的功能都是相应的插件完成的，所以可以根据自己的功能要求安装相依的插件
 
 Gitlab插件：GitLab Plugin 和 Gitlab Hook Plugin
