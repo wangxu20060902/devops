@@ -55,6 +55,207 @@ Node roles   节点角色
 
 Assign Roles  分配角色  用来给用户分配角色的
 
+#############jenkins 凭证管理Credentials Binding#############
+Manage Jenkins >>>  Credentials Binding
+
+Manage Jenkins >>>Manage Credentials  
+
+###################jenkins java 和 maven 安装配置#####################
+java安装
+首先要去下载好JDK，Java SE 8的官方网址是http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+Linux提供了两种安装方式一个是.rpm，另一个是.tar.gz，我所使用的是.tar.gz
+tar zxvf jdk-8u251-linux-x64.tar.gz
+mv jdk1.8.0_251/ /usr/local/java
+设置环境变量，需要修改/etc/profile文件
+vim /etc/profile
+
+export JAVA_HOME=/usr/local/java
+export JRE_HOME=/usr/local/java/jre
+export CLASSPATH=.:$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH
+export PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$PATH
+使环境变量生效
+source /etc/profile
+查看java 信息
+java -version  
+
+安装maven
+下载maven 安装包
+https://mirrors.tuna.tsinghua.edu.cn/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
+
+解压
+tar zxvf apache-maven-3.6.3-bin.tar.gz
+mv apache-maven-3.6.3 /usr/local/maven
+
+配置环境
+export MAVEN_HOME=/usr/local/maven
+export PATH=$PATH:$MAVEN_HOME/bin
+
+使环境生效
+source /etc/profile
+
+在jenkins 中配置java和maven 环境一
+配置java
+Manage Jenkins >>> Global Tool Configuration >>> JDK >>>新增 JDK
+JDK 别名： java
+JAVA_HOME: /usr/local/java
+配置maven
+Manage Jenkins >>> Global Tool Configuration >>> Maven >>>新增 Maven
+新增 maven
+Maven name: maven
+MAVEN_HOME: /usr/local/maven
+ 
+Manage Jenkins >>> Global Tool Configuration >>> Maven 配置
+默认 settings 提供: Seting file in filesystem
+文件路径:/usr/local/maven/conf/settings.xml
+默认全局 settings 提供: Global setting file on filesystem
+
+在jenkins 中配置java和maven 环境二
+
+Manage Jenkins >>> Configure System >>> 全局属性 >>> Environment variables
+新增三个变量：
+键：JAVA_HOME
+值：/usr/local/java
+键：MAVEN_HOME
+值：/usr/local/maven
+键：PATH+EXTRA
+值：$MAVEN_HOME/bin
+
+优化maven 仓库
+创建本地仓库目录
+mkdir -p /usr/local/maven/repo  
+更改配置本地仓库路径
+vim /usr/local/maven/conf/settings.xml
+
+ <!-- localRepository
+   | The path to the local repository maven will use to store artifacts.
+   |
+   | Default: ${user.home}/.m2/repository
+-->
+  <localRepository>/usr/local/maven/repo</localRepository>
+
+  <!-- interactiveMode  
+添加阿里云服务器地址 找到配置：<mirrors> 添加以下代码并保存
+	<!--不使用默认仓库，改为阿里云仓库下载-->
+	<mirror>
+	  <id>alimaven</id>
+	  <mirrorOf>central</mirrorOf>     
+	  <name>aliyun maven</name>
+	  <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+	</mirror>
+
+测试maven 设置是否生效
+回到项目中 以test001 项目为例
+配置 >>>构建 >>> Execute shell >>> 命令添加：
+mvn clean package
+
+点击立即构建
+
+
+#################jenkins tomcat 项目部署########################
+jdk  tomcat 安装
+
+安装jdk
+去官网下载jdk的安装包
+下载jdk rpm包 rpm -ivh jdk-8u152-linux-x64.rpm
+#rpm -ivh jdk-8u152-linux-x64.rpm
+
+#vi  /etc/profile          //配置环境变量
+
+export JAVA_HOME=/usr/java/jdk1.8.0_152
+export JRE_HOME=${JAVA_HOME}/jre
+export CLASSPATH=.:${JAVA_HOME}/lib/:${JRE_HOME}/lib
+export PATH=${JAVA_HOME}/bin:$PATH
+
+#java             //验证jdk
+#javac    //验证jdk
+#java -version    //查看java版本
+
+安装tomcat9
+下载tomcat
+wget http://mirrors.tuna.tsinghua.edu.cn/apache/tomcat/tomcat-9/v9.0.24/bin/apache-tomcat-9.0.24.tar.gz
+
+tar zxvf apache-tomcat-9.0.24.tar.gz
+mv apache-tomcat-9.0.24 /usr/local/tomcat9
+ 
+配置自启动，切换至Tomcat的bin目录执行vi setenv.sh，并按i进入编辑模式，拷贝以下代码粘贴
+
+#add tomcat pid
+CATALINA_PID="$CATALINA_BASE/tomcat.pid"
+#add java opts
+JAVA_OPTS="-server -XX:PermSize=256M -XX:MaxPermSize=1024m -Xms512M -Xmx1024M -XX:MaxNewSize=256m"
+
+chmod +x setenv.sh
+vim /usr/lib/systemd/system/tomcat.service
+
+拷贝以下代码粘贴（注意将第6和7行的Tomcat路径/usr/local/tomcat9 换成你自己的Tomcat的绝对路径）
+
+[Unit]
+Description=Tomcat
+After=syslog.target network.target remote-fs.target nss-lookup.target
+[Service]
+Type=forking
+PIDFile=/usr/local/tomcat9/tomcat.pid
+ExecStart=/usr/local/tomcat9/bin/startup.sh
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s QUIT $MAINPID
+PrivateTmp=true
+[Install]
+WantedBy=multi-user.target
+
+
+//配置开机启动 
+systemctl daemon-reload
+systemctl enable tomcat
+//启动tomcat
+systemctl start tomcat
+//停止tomcat
+systemctl stop tomcat
+//重启tomcat
+systemctl restart tomcat
+
+更改端口vim /usr/local/tomcat9/conf/server.xml
+##目前端口也是默认端口
+<<Connector port="8080" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="8443" />
+    <!-- A "Connector" using the shared thread pool-->
+    <!--
+    <Connector executor="tomcatThreadPool"
+               port="8080" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="8443" />
+//按“i”进入编辑模式，将port="8080"改成port="80"
+<Connector port="80" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="8443" />
+    <!-- A "Connector" using the shared thread pool-->
+    <!--
+    <Connector executor="tomcatThreadPool"
+               port="80" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="8443" />
+			   
+配置gui-manager项目部署方式，切换至Tomcat conf目录，输入vi tomcat-users.xml打开文件，
+按“i”进入编辑模式，拷贝以下代码放置</tomcat-users>标签之间(注意将password和username换成你自己的)
+			   
+<role rolename="manager"/>     
+<role rolename="admin"/> 
+<role rolename="admin-gui"/>
+<role rolename="manager-gui"/>
+<user username="xxx" password="***" roles="admin-gui,manager-gui"/>
+
+cd webapps/manager/META-INF/ 切换至目录，输入vi context.xml打开文件，按i进入编辑模式，将</Context> 标签下的<Valve> 标签注释掉
+
+<Context antiResourceLocking="false" privileged="true" >
+<!--注释掉此标签
+ <Valve className="org.apache.catalina.valves.RemoteAddrValve"
+         allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" />
+-->
+</Context>
+
+systemctl restart tomcat
+浏览器中直接输入你的服务器地址，例如ip地址（不用输端口号了，刚才把端口号改成80了），看见小猫咪，点击manager 输入账号密码即可部署你的项目了
+
 
 Jenkins只是相当与一个容器，所以的功能都是相应的插件完成的，所以可以根据自己的功能要求安装相依的插件
 
