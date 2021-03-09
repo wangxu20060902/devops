@@ -1,0 +1,105 @@
+####################jenkins freestyle 构建部署###################
+#拉取代码
+#java maven 环境配置完毕 创建一个 freestyle 的项目：web_demo_freestyle  从gitlab 上拉取代码
+#web_demo_freestyle >>>General >>> 源码管理 >>> git >>>	Repository URL:git@192.168.140.130:root/test-java.git   选择对应凭证
+点击立即构建测试拉取代码
+##构建编译
+#web_demo_freestyle >>>General >>> 构建 >>> Execute Shell >>> 命令输入：
+echo "现在开始拉取代码构建编译"
+mvn clean package
+echo "代码拉取编译构建结束"
+点击立即构建进行编译打包测试
+
+##部署到tomcat ，安装插件
+管理Jenkins >>> Mangage Plugins >>> 可选插件 >>> 	Deploy to container  安装 deploy to container 插件
+
+web_demo_freestyle >>> General >>> 构建后操作 >>> deploy war/ear to a container 
+
+WAR/EAR files: target/*.war
+
+Containers >>> Tomcat 8.X Remote >>> Credentials: admin/*****      #此处选在部署到tomcat的用户名和密码
+
+Containers >>> Tomcat 8.X Remote >>>Tomcat URL: http://192.168.140.129:8080
+
+然后保存后点击立即构建进行测试
+
+#########################Jenkins maven 构建部署############################
+## 拉取代码
+#雷同freestyle
+新建Item  >>>构建一个maven项目 >>> Build (Root POM:pom.xml,Goals and options: clean package)
+##部署工作雷同上面freestyle
+
+
+#########################Jenkins pipeline 构建部署############################
+
+新建Item  >>> 流水线 >>> web_demo_pipeline >>> 流水线(	定义: pipeline script)
+
+   stages {
+      stage('pull code') {
+         steps {
+           echo 'pull code from gitlab'
+           checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'b7e157de-217f-4fb7-a9d8-d676b7825b3d', url: 'git@192.168.140.130:root/test-java.git']]])
+         }
+      }
+      stage('maven build') {
+         steps {
+            echo 'maven build'
+            sh label: '', script: 'mvn clean package'
+         }
+      }
+   }
+}
+
+#以上语法通过流水线语法可以生成对应的语句
+
+
+################jenkins 之触发器#######################
+触发器基础类型:
+Build after other projects are built   ##在某个项目构建后进行构建
+Build periodically                     ## 定时构建
+Poll SCM                               ## 轮询构建
+触发远程构建 (例如,使用脚本)                ## 远程脚本触发构建
+
+#jenkins gitlab hook 和gitlab 集成进行自动构建
+#安装插件gitlab hook 和gitlab
+Manage Jenkins >>> Manage plugins >>>可选插件 （搜索gitlab 和gitlab hook）   进行安装
+
+Jenkins >>> web_demo_pipeline >>>构建触发器  >>>Build when a change is pushed to GitLab. GitLab webhook URL: http://192.168.140.128:8080/project/web_demo_pipeline  (记下配置到gitlab 上的url:http://192.168.140.128:8080/project/web_demo_pipeline)
+
+以管理员身份登录到gitlab  点击Admin Area >>> settings >>> Network >>>Outbound requests >>> Expand >>>  勾选 Allow requests to the local network from web hooks and services
+然后回到对应的project  此处以springboot 为例 springboot >>>settings >>>Intergrations >>> GO to Webhooks >> URL 输入：http://192.168.140.128:8080/project/web_demo_pipeline  Trigger根据自己的需求选
+可以通过test 自己的事件进行测试 此处应该报403的错误需要到jenkins 设置以下
+登录到jenkins  Manage Jenkins >>>Configure System >>>Gitlab >>> Enable authentication for '/project' end-point  这个勾去掉
+然后再回到gitlab 进行测试就OK了
+
+#################jenkins 构建后邮件发送####################
+##准备好发件邮箱： wangxu20060902@163.com   授权码：BXHVNSXHNRKNIOAJ
+
+#邮箱服务器的配置  安装插件
+ 	
+Manage Jenkins >>> Mangage Plugins >>>可安装插件>>> Email Extension Template Plugin   #安装此插件用来配置发送邮件的模板
+
+Manage Jenkins >>> Configure System >>> Extended E-mail Notification        ##此处以163邮箱为例子
+
+SMTP server ： smtp.163.com
+Default user E-mail suffix ： @163.com
+#Use SMTP Authentication
+User Name : wangxu20060902@163.com
+Password : BXHVNSXHNRKNIOAJ
+Use SSL  #勾选此处使用端口465 如果不选使用默认端口应该是25
+Default Recipients ： wangxu20060902@163.com
+#其他项保持默认就行了
+#此外需要更改此处配置
+Jenkins Location >>>Configure System >>> Jenkins Location >>>系统管理员邮件地址:wangxu20060902@163.com   #此处要保持和填写的邮件地址一致
+#自由风格的项目配置构建后发邮件  回到项目中freestyle
+freestyle >>> 配置 >>> 构建后操作 >>>
+Content Type: HTML (text/html)
+Default Content: ************************    #此处粘贴已经准备好的脚本就可以了，其他设置项保持默认
+#pipeline的项目配置构建后发邮件  此处需要生成两个代码片段一个是post  另外一个是Email的可以通过流水线脚本生成，另外要创建email的模板path根据自己的存储路径调试
+增加代码和stages平行：
+post {
+  always {
+    emailext attachLog: true, body: '${FILE,path="/var/lib/jenkins/workspace/jenkins_email_template.html"}', compressLog: true, subject: '${ENV, var="JOB_NAME"}-第${BUILD_NUMBER}次构建日志', to: 'wangxu20060902@163.com,xu.m.wang@futuremove.cn'
+  }
+}
+
