@@ -22,7 +22,7 @@ GRANT ALL ON sonar.* TO 'sonar'@'%' IDENTIFIED BY 'gemalto.123'; //赋予账号�
 FLUSH PRIVILEGES; //刷新权限
 
 ##############sonarqube安装##########################
-1.root用户无法启动es， 现在创建sonar用户
+1.root用户无法启动es， 现在创建sonar用户，另外sonarqube 的版本要选择支持mysql的  目前7.2之前的版本都支持mysql
 useradd sonar
 password sonar
 wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-7.2.zip
@@ -42,3 +42,9 @@ firewall-cmd --zone=public --permanent --add-port=9000/tcp  #防火墙端口放�
 #登录验证
 http://192.168.140.128:9000/  #点击login 输入username:admin password: admin 弹出一个Generate a token  输入一个生成token的字符此处我用的jenkins记录一下token 后面会用到记录如下：
 jenkins: f45dad00ce7f0bc4918df5c9b64edfae1a0af4c5
+
+
+##########################jenkins 和sonarqube 结合##############################
+
+
+
