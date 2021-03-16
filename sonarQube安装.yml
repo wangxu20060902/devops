@@ -1,0 +1,44 @@
+#######################################sonarqube 安装#############################
+#环境需求:mysql ,jdk, SonarQube ## jdk 已经安装配置完成
+1.Mysql 安装
+wget https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm  #下载mysql repo源
+yum -y localinstall mysql57-community-release-el7-11.noarch.rpm   #安装repo源
+yum -y install mysql-community-server   #安装mysql
+systemctl start mysqld      #启动mysql
+systemctl status mysqld.service   #查看mysql 状态
+firewall-cmd --zone=public --permanent --add-port=3306/tcp  #防火墙端口放行
+firewall-cmd --reload     #重新加载firewalld
+grep 'password' /var/log/mysqld.log   #查看mysql 初始密码
+mysql -uroot -p/euh2D4rB%Dx    #登录mysql
+##登录到mysql 需要更改初始密码才能对其做更多的操作
+alter user user() identified by "gemalto.123";  ##此时会报错说mysql的密码策略不允许
+set global validate_password_policy=LOW;
+set global validate_password_length=6;     ##执行这两条语句之后就可以了执行上面的操作了
+
+#为sonar配置数据库
+CREATE DATABASE sonar CHARACTER SET utf8 COLLATE utf8_general_ci; //设置编码格式
+GRANT ALL ON sonar.* TO 'sonar'@'localhost' IDENTIFIED BY 'gemalto.123'; //创建账号以及密码
+GRANT ALL ON sonar.* TO 'sonar'@'%' IDENTIFIED BY 'gemalto.123'; //赋予账号权限
+FLUSH PRIVILEGES; //刷新权限
+
+##############sonarqube安装##########################
+1.root用户无法启动es， 现在创建sonar用户
+useradd sonar
+password sonar
+wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-7.2.zip
+unzip sonarqube-7.2.zip   #解压文件
+mv sonarqube-7.2 /usr/local/sonar  #部署路径
+chown -R sonar. sonar   #更改属主和权限
+
+vim sonar.properties
+sonar.jdbc.username=sonar   ##数据库账号
+sonar.jdbc.password=gemalto.123  ##数据库密码
+sonar.jdbc.url=jdbc:mysql://192.168.140.128:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false  ##数据库配置
+
+#启动sonar
+su sonar /usr/local/sonar/bin/linux-x86-64/sonar.sh start
+tail  -n 200 -f /usr/local/sonar/logs/sonar.log    #查看启动日志
+firewall-cmd --zone=public --permanent --add-port=9000/tcp  #防火墙端口放行
+#登录验证
+http://192.168.140.128:9000/  #点击login 输入username:admin password: admin 弹出一个Generate a token  输入一个生成token的字符此处我用的jenkins记录一下token 后面会用到记录如下：
+jenkins: f45dad00ce7f0bc4918df5c9b64edfae1a0af4c5
