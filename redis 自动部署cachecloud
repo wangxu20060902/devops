@@ -1,0 +1,115 @@
+###########################################cachecloud deployment#############################
+
+
+cachecloud 环境需求(mysql jdk maven)
+mysql5.7.33(已安装完成)
+jdk1.8 
+maven3.6.5
+
+####################安装jdk1.8#########################################
+yum install java-1.8.0-openjdk.x86_64 -y
+配置java环境
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.242.b08-0.el7_7.x86_64
+export JRE_HOME=${JAVA_HOME}/jre
+export CLASSPATH=.:${JAVA_HOME}/lib/:${JRE_HOME}/lib
+export PATH=${JAVA_HOME}/bin:$PATH
+
+安装方式二
+
+首先要去下载好JDK，Java SE 8的官方网址是http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+Linux提供了两种安装方式一个是.rpm，另一个是.tar.gz，我所使用的是.tar.gz
+tar zxvf jdk-8u251-linux-x64.tar.gz
+mv jdk1.8.0_251/ /usr/local/java
+设置环境变量，需要修改/etc/profile文件
+vim /etc/profile
+
+export JAVA_HOME=/usr/local/java
+export JRE_HOME=/usr/local/java/jre
+export CLASSPATH=.:$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH
+export PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$PATH
+使环境变量生效
+source /etc/profile
+查看java 信息
+java -version  
+
+###############################################安装maven##########################################
+下载maven 安装包
+https://mirrors.tuna.tsinghua.edu.cn/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
+
+解压
+tar zxvf apache-maven-3.6.3-bin.tar.gz
+mv apache-maven-3.6.3 /usr/local/maven
+
+配置环境
+export MAVEN_HOME=/usr/local/maven
+export PATH=$PATH:$MAVEN_HOME/bin
+
+使环境生效
+source /etc/profile
+
+##################################cachecloud安装##############################################
+1.下载源代码 
+项目地址为：https://github.com/sohutv/cachecloud，
+wget https://codeload.github.com/sohutv/cachecloud/zip/1.2
+
+unzip cachecloud-1.2.zip && mv cachecloud-1.2 /usr/local/cachecloud && cd /usr/local/cachecloud/
+
+ls 
+
+drwxr-xr-x 6 root root   151 8月  30 2016 cachecloud-open-client
+drwxr-xr-x 3 root root    32 8月  30 2016 cachecloud-open-common
+drwxr-xr-x 4 root root    62 8月  30 2016 cachecloud-open-web
+-rw-r--r-- 1 root root 11357 8月  30 2016 LICENSE
+-rw-r--r-- 1 root root 13416 8月  30 2016 pom.xml
+-rw-r--r-- 1 root root  6602 8月  30 2016 README.md
+drwxr-xr-x 2 root root    85 3月  18 14:18 script
+
+
+cachecloud-open-client：客户端开发的sdk工具
+cachecloud-open-common：包含了一些工具类、枚举和共用组件（比如发送邮件、短信和用户登录等）
+cachecloud-open-web：cachecloud运维管理平台
+script：包含了数据库脚本、redis服务器初始化脚本和应用启动、停止、部署等脚本
+
+数据库脚本cachecloud.sql位置：/usr/local/cachecloud/script/cachecloud.sql
+创建所使用的数据库
+mysql -uroot -p**********
+CREATE DATABASE cachecloud CHARACTER SET utf8 COLLATE utf8_general_ci;
+use cachecloud;
+source /usr/local/cachecloud/script/cachecloud.sql
+GRANT ALL ON cachecloud.* TO 'cachecloud'@'localhost' IDENTIFIED BY 'gemalto.123'; //创建账号以及密码
+GRANT ALL ON cachecloud.* TO 'cachecloud'@'%' IDENTIFIED BY 'gemalto.123'; //赋予账号权限
+FLUSH PRIVILEGES; //刷新权限
+修改配置文件：
+
+vim /usr/local/cachecloud/cachecloud-open-web/src/main/swap/online.properties
+
+pwd 
+/usr/local/cachecloud
+
+mvn clean compile install -Ponline
+#构建编译完成后操作
+
+创建/opt/cachecloud-web目录，并拷贝相关文件
+mkdir -p /opt/cachecloud-web
+cp /usr/local/cachecloud/cachecloud-open-web/target/cachecloud-open-web-1.0-SNAPSHOT.war /opt/cachecloud-web/
+cp /usr/local/cachecloud/cachecloud-open-web/src/main/resources/cachecloud-web.conf  /opt/cachecloud-web/
+scp script/st* /opt/cachecloud-web/
+mkdir -p /opt/cachecloud-web/logs
+cd /opt/cachecloud-web/
+chmod 755 start.sh 
+chmod 755 stop.sh.sh
+执行启动
+sh /opt/cachecloud-web/start.sh
+
+访问url： http://192.168.140.129:8585/
+firewalld 开启的
+firewall-cmd --zone=public --permanent --add-port=8585/tcp
+firewall-cmd --reload
+
+
+##注释踩坑由于我使用的mysql版本 5.7.33  再初始化表的时候出现了错误
+##应用报错：Cause: com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: Unknown column 'collect' in 'field list' 
+#查询建表语句发现：ALTER TABLE `machine_info` ADD COLUMN `collect` int DEFAULT 1 COMMENT 'switch of collect server status,1:open,0:close'; 执行失败
+报错ERROR 1067 (42000): Invalid default value for 'service_time' 
+解决方案： alter table machine_info modify COLUMN service_time  timestamp NOT NULL DEFAULT current_timestamp COMMENT '上线时间';
+再执行：ALTER TABLE `machine_info` ADD COLUMN `collect` int DEFAULT 1 COMMENT 'switch of collect server status,1:open,0:close';
