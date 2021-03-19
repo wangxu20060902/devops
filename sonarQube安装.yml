@@ -46,5 +46,118 @@ jenkins: f45dad00ce7f0bc4918df5c9b64edfae1a0af4c5
 
 ##########################jenkins 和sonarqube 结合##############################
 
+##jenkins sonarqube 检查的流程是jenkins sonarqube scanner插件 >>>调用 sonarqube scanner  >>>提交审查代码到 sonarqube 服务器  >>> 然后保存审查结果到mysql
+##在jenkins 上安装插件sonarqube scanner
+Manage Jenkins >>>manage Plugins >>> 可选插件 >>> sonarqube scanner     #安装sonarqube scanner 插件
+##在服务器中安装sonarqube scanner有两种方式一种通过jenkins 来安装另外一种模式通过命令，此处以jenkins 安装为例
+Jenkins >>> Global Tool Configuration >>> SonarQube Scanner >>> Name: 自己定义   Install automatically： 选择自己需要的版本
+#服务器安装sonarqube scanner
+wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.5.0.2216.zip
+unzip sonar-scanner-cli-4.5.0.2216.zip 
+mv sonar-scanner-4.5.0.2216 /usr/local/sonar-scanner
+#修改配置
+vim /usr/local/sonar-scanner/conf/sonar-scanner.properties  # 添加下列内容
+#----- Default SonarQube server
+sonar.host.url=http://192.168.140.128:9000
+#----- Default source code encoding
+sonar.sourceEncoding=UTF-8
+sonar.jdbc.username=sonar
+sonar.jdbc.password=sonar
+sonar.jdbc.url=jdbc:mysql://192.168.140.128:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance
+
+#保存并退出
+#配置环境变量 
+vim /etc/profile
+#在最后添加以下内容
+export SONAR_SCANNER_HOME=/usr/local/sonar-scanner
+export PATH=${SONAR_SCANNER_HOME}/bin:${PATH}
+
+保存并退出
+
+#生效配置
+source /etc/profile
+#测试
+sonar-scanner -h 
+#出现以下内容，则安装成功
+INFO: 
+INFO: usage: sonar-scanner [options]
+INFO: 
+INFO: Options:
+INFO:  -D,--define <arg>     Define property
+INFO:  -h,--help             Display help information
+INFO:  -v,--version          Display version information
+INFO:  -X,--debug            Produce execution debug output
+
+#在jenkins中配置sonarqube scanner  环境
+Jenkins >>> Global Tool Configuration >>>SonarQube Scanner >>>	新增 SonarQube Scanner(Name:sonar-scanner,SONAR_RUNNER_HOME:/usr/local/sonar-scanner	)
+
+#jenkins 中配置sonarqube 服务器的信息
+manage jenkins >>>Configure System >>>SonarQube servers >>>Add SonarQube (name:sonarqube server; Server URL: http://192.168.140.128:9000/) ##此处需要凭证验证，现在添加凭证验证
+
+manage jenkins >>>manage credentail >>>全局凭据 (unrestricted) >>> 添加凭据 >>> （类型:secert text;Secret:f45dad00ce7f0bc4918df5c9b64edfae1a0af4c5)
+
+#在项目中使用sonarqube 做代码质量分析 此例是以freestyle 项目为例项目名springboot
+Jenkins >>> springboot >>>构建 >>> Execute SonarQube Scanner (Task to run: scan ; JDK: java;
+Analysis properties:
+
+sonar.projectKey=${JOB_NAME}
+sonar.sources=.
+sonar.projectName=${JOB_NAME}
+sonar.projectVersion=${BUILD_VERSION}
+sonar.language=java
+sonar.sourceEncoding=UTF-8
+sonar.sources=$WORKSPACE
+sonar.java.binaries=$WORKSPACE
+
+#然后保存应用
+#点击立即构建看看构建结果
+
+#在项目中使用sonarqube 做代码质量分析 此例是以流水线项目为例
+
+pipeline {
+   agent any
+
+   stages {
+      stage('pull code for gitlab') {
+         steps {
+            echo 'start pull code'
+            checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'fa20d737-4d10-48c1-878b-48fc31a867a6', url: 'git@192.168.140.130:avacar-test/springboot.git']]])
+            echo 'start pull completed'
+         }
+      }
+      stage('sonar check code') {
+         steps {
+            echo 'check starting now'
+            script {
+              // 引入sonarqube scanner 工具
+	           scannerHome = tool 'sonar-scanner' //sonar-scanner 为global tool configurtion sonarqube scanner name
+            }
+              // 引入sonarqube服务器的环境
+               withSonarQubeEnv('sonarqube'){
+                  sh "${scannerHome}/bin/sonar-scanner"
+               }
+            echo 'check completed now'
+         }
+      }
+      stage('maven build') {
+         steps {
+            echo 'maven build'
+            sh label: '', script: 'mvn clean package'
+         }
+      }
+      stage('deployment project') {
+         steps {
+             echo 'deploy project to container'
+            deploy adapters: [tomcat8(credentialsId: '40754592-d813-4009-9cf3-329ca03a7ead', path: '', url: 'http://192.168.140.129:8080')], contextPath: null, war: 'target/*.war'
+         }
+      }
+    }
+    post('pull result with email') {
+    always {
+     emailext attachLog: true, body: '${FILE,path="../jenkins_email_template.html"}', compressLog: true, subject: '${ENV, var="JOB_NAME"}-第${BUILD_NUMBER}次构建日志', to: 'wangxu20060902@163.com,xu.m.wang@futuremove.cn'
+    }
+   }
+}
 
 
+点击构建进行测试
