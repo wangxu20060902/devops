@@ -1,0 +1,1146 @@
+
+Started by user avacar
+Running in Durability level: MAX_SURVIVABILITY
+Loading library svw-pipeline-library2@master
+Attempting to resolve master from remote references...
+ > git --version # timeout=10
+using GIT_ASKPASS to set credentials 
+ > git ls-remote -h http://10.122.7.81/devops/core/svw-pipeline-library.git # timeout=10
+Found match: refs/heads/master revision 68b297053e2e520a10f8006a8b2c868dccfa7584
+ > git rev-parse --is-inside-work-tree # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url http://10.122.7.81/devops/core/svw-pipeline-library.git # timeout=10
+Fetching without tags
+Fetching upstream changes from http://10.122.7.81/devops/core/svw-pipeline-library.git
+ > git --version # timeout=10
+using GIT_ASKPASS to set credentials 
+ > git fetch --no-tags --progress http://10.122.7.81/devops/core/svw-pipeline-library.git +refs/heads/*:refs/remotes/origin/*
+Checking out Revision 68b297053e2e520a10f8006a8b2c868dccfa7584 (master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 68b297053e2e520a10f8006a8b2c868dccfa7584
+Commit message: "添加autotest环境默认域名"
+[Pipeline] node
+Running on JenkinsNode117 in /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1
+[Pipeline] {
+[Pipeline] cleanWs
+[WS-CLEANUP] Deleting project workspace...[WS-CLEANUP] done
+[Pipeline] echo
+Your input for pipeline_test is :[productName:avacar, appName:avacar-apigateway-v1, infraType:ali-k8s]
+[Pipeline] stage
+[Pipeline] { (Prepare)
+[Pipeline] echo
+Your input for stage_prepare is :[productName:avacar, appName:avacar-apigateway-v1, infraType:ali-k8s, envName:test]
+[Pipeline] echo
+=========start to export basic config to job env============
+[Pipeline] libraryResource
+[Pipeline] libraryResource
+[Pipeline] dir
+Running in /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/productConf
+[Pipeline] {
+[Pipeline] checkout
+Cloning the remote Git repository
+Cloning repository git@10.122.7.81:devops/products_config/sc_products.git
+ > git init /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/productConf # timeout=10
+Fetching upstream changes from git@10.122.7.81:devops/products_config/sc_products.git
+ > git --version # timeout=10
+ > git fetch --tags --progress git@10.122.7.81:devops/products_config/sc_products.git +refs/heads/*:refs/remotes/origin/*
+ > git config remote.origin.url git@10.122.7.81:devops/products_config/sc_products.git # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url git@10.122.7.81:devops/products_config/sc_products.git # timeout=10
+Fetching upstream changes from git@10.122.7.81:devops/products_config/sc_products.git
+ > git fetch --tags --progress git@10.122.7.81:devops/products_config/sc_products.git +refs/heads/*:refs/remotes/origin/*
+ > git rev-parse origin/master^{commit} # timeout=10
+Checking out Revision 584b69eff0a67fde4893ae6ed663012fd1844a97 (origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 584b69eff0a67fde4893ae6ed663012fd1844a97
+Commit message: "Update filebeats.yaml"
+ > git rev-list --no-walk 584b69eff0a67fde4893ae6ed663012fd1844a97 # timeout=10
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] readFile
+[Pipeline] echo
+Product Config Yaml:
+kind: ProductCiCdConfig
+metadata:
+  name: avacar
+  owner:
+    - zhangli6@csvw.com
+  notifyEmail:
+    - liziheng@csvw.com
+spec:
+  apps:
+    - name: default
+      privileged: false
+[Pipeline] readFile
+[Pipeline] dir
+Running in /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appConf/master
+[Pipeline] {
+[Pipeline] checkout
+Cloning the remote Git repository
+Cloning repository git@10.122.7.81:devops/app_job_config/test/avacar.git
+ > git init /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appConf/master # timeout=10
+Fetching upstream changes from git@10.122.7.81:devops/app_job_config/test/avacar.git
+ > git --version # timeout=10
+ > git fetch --tags --progress git@10.122.7.81:devops/app_job_config/test/avacar.git +refs/heads/*:refs/remotes/origin/*
+ > git config remote.origin.url git@10.122.7.81:devops/app_job_config/test/avacar.git # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url git@10.122.7.81:devops/app_job_config/test/avacar.git # timeout=10
+Fetching upstream changes from git@10.122.7.81:devops/app_job_config/test/avacar.git
+ > git fetch --tags --progress git@10.122.7.81:devops/app_job_config/test/avacar.git +refs/heads/*:refs/remotes/origin/*
+ > git rev-parse origin/master^{commit} # timeout=10
+Checking out Revision 9d1f5f63eb4f49312c8716c1e8cd738e15dc52ca (origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 9d1f5f63eb4f49312c8716c1e8cd738e15dc52ca
+Commit message: "Update config.yaml"
+ > git rev-list --no-walk 9d1f5f63eb4f49312c8716c1e8cd738e15dc52ca # timeout=10
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] echo
+=========start to export app config to job env============
+[Pipeline] readFile
+[Pipeline] echo
+App Config Yaml:
+kind: AppCiCdConfig
+metadata:
+  app: avacar-apigateway-v1
+  type: springboot
+#  needNpmBuild: false
+  skipTest: true
+  src: git@10.122.7.81:avacar/common/avacar-apigateway-v1.git
+  branchOrTagName: tag-0.17.4-UAT-K8S-20200320
+  appVersion: 0.17.4
+  dockerfileTemplate: springboot-dockerfile
+  notifyEmail:
+    - jun.lei@futuremove.cn
+spec:
+  replicas: 1
+  needRoute: true
+  envVar:
+    - name: JAVA_OPTIONS
+      value: '-server -d64 -Xms2048m -Xmx2048m -Djava.security.egd=file:/dev/./urandom -Dfile.encoding=utf-8 -Dspring.profiles.active=dev -Denv_test=hhhh -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.port=1099 -Dcom.sun.management.jmxremote.rmi.port=1099 -Djava.rmi.server.hostname=127.0.0.1'
+    - name: security_user_name
+      value: 'avacar'
+    - name: security_user_password
+      value: 'Admin@svwsc'
+    - name: rabbitmq_host
+      value: '172.20.0.218'
+    - name: rabbitmq_port
+      value: '5672'
+    - name: rabbitmq_username
+      value: 'rabbit'
+    - name: rabbitmq_password
+      value: 'rabbit'
+    - name: encrypt_keyStore_pwd
+      value: 'Admin@svwsc' 
+    - name: zuul_host_maxPerRouteConnections
+      value: '1000'
+    - name: zuul_host_maxTotalConnections
+      value: '2000'
+    - name: zuul_semaphore_maxSemaphores
+      value: '1000'
+    - name: GC_MAX_METASPACE_SIZE
+      value: '500'      
+      
+  resources:
+    limits:
+      cpu: '2'
+      memory: 3Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Maven Build)
+[Pipeline] echo
+Your input for stage_mvnBuild is :[branchOrTag:tag-0.17.4-UAT-K8S-20200320, removeSnapshot:true, skipTest:false]
+[Pipeline] dir
+Running in /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode
+[Pipeline] {
+[Pipeline] checkout
+Cloning the remote Git repository
+Cloning repository git@10.122.7.81:avacar/common/avacar-apigateway-v1.git
+ > git init /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode # timeout=10
+Fetching upstream changes from git@10.122.7.81:avacar/common/avacar-apigateway-v1.git
+ > git --version # timeout=10
+ > git fetch --tags --progress git@10.122.7.81:avacar/common/avacar-apigateway-v1.git +refs/heads/*:refs/remotes/origin/*
+ > git config remote.origin.url git@10.122.7.81:avacar/common/avacar-apigateway-v1.git # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url git@10.122.7.81:avacar/common/avacar-apigateway-v1.git # timeout=10
+Fetching upstream changes from git@10.122.7.81:avacar/common/avacar-apigateway-v1.git
+ > git fetch --tags --progress git@10.122.7.81:avacar/common/avacar-apigateway-v1.git +refs/heads/*:refs/remotes/origin/*
+ > git rev-parse origin/tag-0.17.4-UAT-K8S-20200320^{commit} # timeout=10
+ > git rev-parse tag-0.17.4-UAT-K8S-20200320^{commit} # timeout=10
+Checking out Revision 911a2c7a21bf2dae87e613bfe753e9b4ef7ee2b5 (tag-0.17.4-UAT-K8S-20200320)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 911a2c7a21bf2dae87e613bfe753e9b4ef7ee2b5
+Commit message: "Merge branch 'develop' into 'test'"
+ > git rev-list --no-walk 911a2c7a21bf2dae87e613bfe753e9b4ef7ee2b5 # timeout=10
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] echo
+=========删除POM中的-SNAPSHOT==========
+[Pipeline] dir
+Running in /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode
+[Pipeline] {
+[Pipeline] readFile
+[Pipeline] writeFile
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] echo
+=========修改POM完毕==========
+[Pipeline] dir
+Running in /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode
+[Pipeline] {
+[Pipeline] getArtifactoryServer
+[Pipeline] newMavenBuild
+[Pipeline] newBuildInfo
+[Pipeline] echo
+------falsenullnull--------
+[Pipeline] echo
+------------clean package ---------------------
+[Pipeline] artifactoryMavenBuild
+Jenkins Artifactory Plugin version: 2.16.2
+Artifactory integration is enabled
+[appCode] $ /opt/software/jdk1.8.0_131/bin/java -classpath /opt/software/apache-maven-3.5.0/boot/* -Dmaven.home=/opt/software/apache-maven-3.5.0 -Dmaven.conf=/opt/software/apache-maven-3.5.0/conf -DbuildInfoConfig.propertiesFile=/var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode@tmp/buildInfo5662632519933502349.properties -DbuildInfoConfig.artifactoryResolutionEnabled=true -Dm3plugin.lib=/var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode@tmp/cache/artifactory-plugin/2.16.2 -Dclassworlds.conf=/var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode@tmp/classworlds7255357906960631319conf -Dmaven.multiModuleProjectDirectory=/var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode org.codehaus.plexus.classworlds.launcher.Launcher -f pom.xml clean package
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - Scanning for projects...
+[main] INFO org.jfrog.build.extractor.maven.BuildInfoRecorder - Initializing Artifactory Build-Info Recording
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - 
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - ------------------------------------------------------------------------
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - Building avacar-apigateway-v1 0.0.2
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - ------------------------------------------------------------------------
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - 
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - --- maven-clean-plugin:2.6.1:clean (default-clean) @ avacar-apigateway-v1 ---
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - 
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - --- jacoco-maven-plugin:0.8.2:prepare-agent (agent) @ avacar-apigateway-v1 ---
+[main] INFO org.jacoco.maven.AgentMojo - argLine set to -javaagent:/root/.m2/repository/org/jacoco/org.jacoco.agent/0.8.2/org.jacoco.agent-0.8.2-runtime.jar=destfile=/var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode/target/jacoco.exec
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - 
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - --- maven-resources-plugin:2.6:resources (default-resources) @ avacar-apigateway-v1 ---
+[main] INFO org.apache.maven.shared.filtering.DefaultMavenResourcesFiltering - Using 'UTF-8' encoding to copy filtered resources.
+[main] INFO org.apache.maven.shared.filtering.DefaultMavenResourcesFiltering - Copying 0 resource
+[main] INFO org.apache.maven.shared.filtering.DefaultMavenResourcesFiltering - Copying 3 resources
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - 
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - --- maven-compiler-plugin:3.1:compile (default-compile) @ avacar-apigateway-v1 ---
+[main] INFO org.apache.maven.plugin.compiler.CompilerMojo - Changes detected - recompiling the module!
+[main] INFO org.codehaus.plexus.compiler.javac.JavacCompiler - Compiling 21 source files to /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode/target/classes
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - 
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - --- maven-resources-plugin:2.6:testResources (default-testResources) @ avacar-apigateway-v1 ---
+[main] INFO org.apache.maven.shared.filtering.DefaultMavenResourcesFiltering - Using 'UTF-8' encoding to copy filtered resources.
+[main] INFO org.apache.maven.shared.filtering.DefaultMavenResourcesFiltering - Copying 1 resource
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - 
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ avacar-apigateway-v1 ---
+[main] INFO org.apache.maven.plugin.compiler.TestCompilerMojo - Changes detected - recompiling the module!
+[main] INFO org.codehaus.plexus.compiler.javac.JavacCompiler - Compiling 11 source files to /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode/target/test-classes
+[main] WARNING org.apache.maven.plugin.compiler.TestCompilerMojo - /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode/src/test/java/com/svw/avacar/apigateway/filters/PreTokenAuthenticationFilterTest.java: /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode/src/test/java/com/svw/avacar/apigateway/filters/PreTokenAuthenticationFilterTest.java uses unchecked or unsafe operations.
+[main] WARNING org.apache.maven.plugin.compiler.TestCompilerMojo - /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode/src/test/java/com/svw/avacar/apigateway/filters/PreTokenAuthenticationFilterTest.java: Recompile with -Xlint:unchecked for details.
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - 
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - --- maven-surefire-plugin:2.18.1:test (default-test) @ avacar-apigateway-v1 ---
+[main] INFO org.apache.maven.plugin.surefire.SurefirePlugin - Surefire report directory: /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+2020-04-01 10:06:15.996 [main] INFO  org.springframework.test.context.support.AbstractTestContextBootstrapper 319 buildDefaultMergedContextConfiguration - Neither @ContextConfiguration nor @ContextHierarchy found for test class [com.svw.avacar.apigateway.utilstest.CrossDomainListTest], using DelegatingSmartContextLoader
+2020-04-01 10:06:16.014 [main] INFO  org.springframework.test.context.support.AbstractContextLoader 264 generateDefaultLocations - Could not detect default resource locations for test class [com.svw.avacar.apigateway.utilstest.CrossDomainListTest]: no resource found for suffixes {-context.xml}.
+2020-04-01 10:06:16.017 [main] INFO  org.springframework.test.context.support.AnnotationConfigContextLoaderUtils 81 detectDefaultConfigurationClasses - Could not detect default configuration classes for test class [com.svw.avacar.apigateway.utilstest.CrossDomainListTest]: CrossDomainListTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2020-04-01 10:06:16.112 [main] INFO  org.springframework.test.context.support.AbstractTestContextBootstrapper 187 getTestExecutionListeners - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@3962ec84, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@147e0734, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@2bdab835, org.springframework.test.context.support.DirtiesContextTestExecutionListener@7b8aebd0]
+2020-04-01 10:06:16.115 [main] INFO  org.springframework.test.context.support.AbstractTestContextBootstrapper 319 buildDefaultMergedContextConfiguration - Neither @ContextConfiguration nor @ContextHierarchy found for test class [com.svw.avacar.apigateway.utilstest.TokenValidateListTest], using DelegatingSmartContextLoader
+2020-04-01 10:06:16.115 [main] INFO  org.springframework.test.context.support.AbstractContextLoader 264 generateDefaultLocations - Could not detect default resource locations for test class [com.svw.avacar.apigateway.utilstest.TokenValidateListTest]: no resource found for suffixes {-context.xml}.
+2020-04-01 10:06:16.116 [main] INFO  org.springframework.test.context.support.AnnotationConfigContextLoaderUtils 81 detectDefaultConfigurationClasses - Could not detect default configuration classes for test class [com.svw.avacar.apigateway.utilstest.TokenValidateListTest]: TokenValidateListTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2020-04-01 10:06:16.126 [main] INFO  org.springframework.test.context.support.AbstractTestContextBootstrapper 187 getTestExecutionListeners - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@722787b5, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@edb83f8, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@8b41ad, org.springframework.test.context.support.DirtiesContextTestExecutionListener@541d4d9f]
+2020-04-01 10:06:16.147 [main] INFO  org.springframework.test.context.support.AbstractTestContextBootstrapper 187 getTestExecutionListeners - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@22da200e, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@4f26425b, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@f03ee8f, org.springframework.test.context.support.DirtiesContextTestExecutionListener@40dd552c]
+2020-04-01 10:06:16.150 [main] INFO  org.springframework.test.context.support.AbstractTestContextBootstrapper 319 buildDefaultMergedContextConfiguration - Neither @ContextConfiguration nor @ContextHierarchy found for test class [com.svw.avacar.apigateway.fallback.FallBackProviderTest], using DelegatingSmartContextLoader
+2020-04-01 10:06:16.151 [main] INFO  org.springframework.test.context.support.AbstractContextLoader 264 generateDefaultLocations - Could not detect default resource locations for test class [com.svw.avacar.apigateway.fallback.FallBackProviderTest]: no resource found for suffixes {-context.xml}.
+2020-04-01 10:06:16.152 [main] INFO  org.springframework.test.context.support.AnnotationConfigContextLoaderUtils 81 detectDefaultConfigurationClasses - Could not detect default configuration classes for test class [com.svw.avacar.apigateway.fallback.FallBackProviderTest]: FallBackProviderTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2020-04-01 10:06:16.163 [main] INFO  org.springframework.test.context.support.AbstractTestContextBootstrapper 187 getTestExecutionListeners - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@75ed125a, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@653a5967, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@5a85b4e6, org.springframework.test.context.support.DirtiesContextTestExecutionListener@766b6d02]
+Running com.svw.avacar.apigateway.utilstest.CrossDomainListTest
+2020-04-01 10:06:17.365 [main] INFO  org.springframework.test.context.support.AbstractTestContextBootstrapper 319 buildDefaultMergedContextConfiguration - Neither @ContextConfiguration nor @ContextHierarchy found for test class [com.svw.avacar.apigateway.utilstest.CrossDomainListTest], using DelegatingSmartContextLoader
+2020-04-01 10:06:17.366 [main] INFO  org.springframework.test.context.support.AbstractContextLoader 264 generateDefaultLocations - Could not detect default resource locations for test class [com.svw.avacar.apigateway.utilstest.CrossDomainListTest]: no resource found for suffixes {-context.xml}.
+2020-04-01 10:06:17.367 [main] INFO  org.springframework.test.context.support.AnnotationConfigContextLoaderUtils 81 detectDefaultConfigurationClasses - Could not detect default configuration classes for test class [com.svw.avacar.apigateway.utilstest.CrossDomainListTest]: CrossDomainListTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2020-04-01 10:06:17.375 [main] INFO  org.springframework.test.context.support.AbstractTestContextBootstrapper 187 getTestExecutionListeners - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@11e75942, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@23c61c1b, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@4a6d6308, org.springframework.test.context.support.DirtiesContextTestExecutionListener@773cc551]
+2020-04-01 10:06:17.527 [main] INFO  org.springframework.context.support.AbstractApplicationContext 583 prepareRefresh - Refreshing org.springframework.context.support.GenericApplicationContext@4e3bc13b: startup date [Wed Apr 01 10:06:17 CST 2020]; root of context hierarchy
+2020-04-01 10:06:17.777 [main] INFO  org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor 155 <init> - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.613 sec - in com.svw.avacar.apigateway.utilstest.CrossDomainListTest
+Running com.svw.avacar.apigateway.utilstest.TokenValidateListTest
+2020-04-01 10:06:17.980 [main] INFO  org.springframework.test.context.support.AbstractTestContextBootstrapper 319 buildDefaultMergedContextConfiguration - Neither @ContextConfiguration nor @ContextHierarchy found for test class [com.svw.avacar.apigateway.utilstest.TokenValidateListTest], using DelegatingSmartContextLoader
+2020-04-01 10:06:17.981 [main] INFO  org.springframework.test.context.support.AbstractContextLoader 264 generateDefaultLocations - Could not detect default resource locations for test class [com.svw.avacar.apigateway.utilstest.TokenValidateListTest]: no resource found for suffixes {-context.xml}.
+2020-04-01 10:06:17.982 [main] INFO  org.springframework.test.context.support.AnnotationConfigContextLoaderUtils 81 detectDefaultConfigurationClasses - Could not detect default configuration classes for test class [com.svw.avacar.apigateway.utilstest.TokenValidateListTest]: TokenValidateListTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2020-04-01 10:06:17.990 [main] INFO  org.springframework.test.context.support.AbstractTestContextBootstrapper 187 getTestExecutionListeners - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@2522bea6, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@e60c516, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@7db4c883, org.springframework.test.context.support.DirtiesContextTestExecutionListener@7158a28c]
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.003 sec - in com.svw.avacar.apigateway.utilstest.TokenValidateListTest
+Running com.svw.avacar.apigateway.entitytest.EntityTest
+2020-04-01 10:06:18.005 [main] ERROR com.svw.avacar.apigateway.entitytest.EntityTest 94 excuteTest - Method not found: isLOGGER
+java.beans.IntrospectionException: Method not found: isLOGGER
+	at java.beans.PropertyDescriptor.<init>(PropertyDescriptor.java:107)
+	at java.beans.PropertyDescriptor.<init>(PropertyDescriptor.java:71)
+	at com.svw.avacar.apigateway.entitytest.EntityTest.excuteTest(EntityTest.java:50)
+	at com.svw.avacar.apigateway.entitytest.EntityTest.testDomain(EntityTest.java:28)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.execute(JUnit4Provider.java:283)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeWithRerun(JUnit4Provider.java:173)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:153)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:128)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:203)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:155)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+2020-04-01 10:06:18.010 [main] ERROR com.svw.avacar.apigateway.entitytest.EntityTest 94 excuteTest - Method not found: is$jacocoData
+java.beans.IntrospectionException: Method not found: is$jacocoData
+	at java.beans.PropertyDescriptor.<init>(PropertyDescriptor.java:107)
+	at java.beans.PropertyDescriptor.<init>(PropertyDescriptor.java:71)
+	at com.svw.avacar.apigateway.entitytest.EntityTest.excuteTest(EntityTest.java:50)
+	at com.svw.avacar.apigateway.entitytest.EntityTest.testDomain(EntityTest.java:28)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.execute(JUnit4Provider.java:283)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeWithRerun(JUnit4Provider.java:173)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:153)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:128)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:203)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:155)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+2020-04-01 10:06:18.014 [main] ERROR com.svw.avacar.apigateway.entitytest.EntityTest 94 excuteTest - Method not found: is$jacocoData
+java.beans.IntrospectionException: Method not found: is$jacocoData
+	at java.beans.PropertyDescriptor.<init>(PropertyDescriptor.java:107)
+	at java.beans.PropertyDescriptor.<init>(PropertyDescriptor.java:71)
+	at com.svw.avacar.apigateway.entitytest.EntityTest.excuteTest(EntityTest.java:50)
+	at com.svw.avacar.apigateway.entitytest.EntityTest.testDomain(EntityTest.java:28)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.execute(JUnit4Provider.java:283)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeWithRerun(JUnit4Provider.java:173)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:153)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:128)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:203)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:155)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+2020-04-01 10:06:18.016 [main] ERROR com.svw.avacar.apigateway.entitytest.EntityTest 94 excuteTest - Method not found: isLOGGER
+java.beans.IntrospectionException: Method not found: isLOGGER
+	at java.beans.PropertyDescriptor.<init>(PropertyDescriptor.java:107)
+	at java.beans.PropertyDescriptor.<init>(PropertyDescriptor.java:71)
+	at com.svw.avacar.apigateway.entitytest.EntityTest.excuteTest(EntityTest.java:50)
+	at com.svw.avacar.apigateway.entitytest.EntityTest.testDomain(EntityTest.java:28)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.execute(JUnit4Provider.java:283)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeWithRerun(JUnit4Provider.java:173)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:153)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:128)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:203)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:155)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+2020-04-01 10:06:18.018 [main] ERROR com.svw.avacar.apigateway.entitytest.EntityTest 94 excuteTest - Method not found: is$jacocoData
+java.beans.IntrospectionException: Method not found: is$jacocoData
+	at java.beans.PropertyDescriptor.<init>(PropertyDescriptor.java:107)
+	at java.beans.PropertyDescriptor.<init>(PropertyDescriptor.java:71)
+	at com.svw.avacar.apigateway.entitytest.EntityTest.excuteTest(EntityTest.java:50)
+	at com.svw.avacar.apigateway.entitytest.EntityTest.testDomain(EntityTest.java:28)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.execute(JUnit4Provider.java:283)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeWithRerun(JUnit4Provider.java:173)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:153)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:128)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:203)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:155)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.044 sec - in com.svw.avacar.apigateway.entitytest.EntityTest
+Running com.svw.avacar.apigateway.entitytest.ConfigTest
+2020-04-01 10:06:18.034 [main] INFO  org.springframework.test.context.support.AbstractTestContextBootstrapper 187 getTestExecutionListeners - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@7a2b8501, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@7b6bcbee, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@3532b5d9, org.springframework.test.context.support.DirtiesContextTestExecutionListener@77bca6d6]
+2020-04-01 10:06:18.071 [main] INFO  org.springframework.context.support.AbstractApplicationContext 583 prepareRefresh - Refreshing org.springframework.context.support.GenericApplicationContext@511936ad: startup date [Wed Apr 01 10:06:18 CST 2020]; root of context hierarchy
+2020-04-01 10:06:18.337 [main] INFO  org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor 155 <init> - JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.295 sec - in com.svw.avacar.apigateway.entitytest.ConfigTest
+Running com.svw.avacar.apigateway.fallback.FallBackProviderTest
+2020-04-01 10:06:19.345 [main] INFO  org.springframework.test.context.support.AbstractTestContextBootstrapper 319 buildDefaultMergedContextConfiguration - Neither @ContextConfiguration nor @ContextHierarchy found for test class [com.svw.avacar.apigateway.fallback.FallBackProviderTest], using DelegatingSmartContextLoader
+2020-04-01 10:06:19.346 [main] INFO  org.springframework.test.context.support.AbstractContextLoader 264 generateDefaultLocations - Could not detect default resource locations for test class [com.svw.avacar.apigateway.fallback.FallBackProviderTest]: no resource found for suffixes {-context.xml}.
+2020-04-01 10:06:19.346 [main] INFO  org.springframework.test.context.support.AnnotationConfigContextLoaderUtils 81 detectDefaultConfigurationClasses - Could not detect default configuration classes for test class [com.svw.avacar.apigateway.fallback.FallBackProviderTest]: FallBackProviderTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2020-04-01 10:06:19.359 [main] INFO  org.springframework.test.context.support.AbstractTestContextBootstrapper 187 getTestExecutionListeners - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@78cf80a2, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@30ef773e, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@26b3bc8f, org.springframework.test.context.support.DirtiesContextTestExecutionListener@1df2d986]
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.147 sec - in com.svw.avacar.apigateway.fallback.FallBackProviderTest
+Running com.svw.avacar.apigateway.filters.PreRequestLogFilterTest
+2020-04-01 10:06:20,897 main ERROR Could not reconfigure JMX java.lang.LinkageError: loader constraint violation: loader (instance of org/powermock/core/classloader/MockClassLoader) previously initiated loading for a different type with name "javax/management/MBeanServer"
+	at java.lang.ClassLoader.defineClass1(Native Method)
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:763)
+	at org.powermock.core.classloader.MockClassLoader.loadUnmockedClass(MockClassLoader.java:262)
+	at org.powermock.core.classloader.MockClassLoader.loadModifiedClass(MockClassLoader.java:206)
+	at org.powermock.core.classloader.DeferSupportingClassLoader.loadClass1(DeferSupportingClassLoader.java:89)
+	at org.powermock.core.classloader.DeferSupportingClassLoader.loadClass(DeferSupportingClassLoader.java:79)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	at org.apache.logging.log4j.core.jmx.Server.unregisterAllMatching(Server.java:335)
+	at org.apache.logging.log4j.core.jmx.Server.unregisterLoggerContext(Server.java:259)
+	at org.apache.logging.log4j.core.jmx.Server.reregisterMBeansAfterReconfigure(Server.java:164)
+	at org.apache.logging.log4j.core.jmx.Server.reregisterMBeansAfterReconfigure(Server.java:140)
+	at org.apache.logging.log4j.core.LoggerContext.setConfiguration(LoggerContext.java:541)
+	at org.apache.logging.log4j.core.LoggerContext.reconfigure(LoggerContext.java:603)
+	at org.apache.logging.log4j.core.LoggerContext.reconfigure(LoggerContext.java:620)
+	at org.apache.logging.log4j.core.LoggerContext.start(LoggerContext.java:226)
+	at org.apache.logging.log4j.core.impl.Log4jContextFactory.getContext(Log4jContextFactory.java:152)
+	at org.apache.logging.log4j.core.impl.Log4jContextFactory.getContext(Log4jContextFactory.java:45)
+	at org.apache.logging.log4j.LogManager.getContext(LogManager.java:194)
+	at org.apache.logging.log4j.spi.AbstractLoggerAdapter.getContext(AbstractLoggerAdapter.java:103)
+	at org.apache.logging.slf4j.Log4jLoggerFactory.getContext(Log4jLoggerFactory.java:43)
+	at org.apache.logging.log4j.spi.AbstractLoggerAdapter.getLogger(AbstractLoggerAdapter.java:42)
+	at org.apache.logging.slf4j.Log4jLoggerFactory.getLogger(Log4jLoggerFactory.java:29)
+	at org.slf4j.LoggerFactory.getLogger(LoggerFactory.java:358)
+	at org.slf4j.LoggerFactory.getLogger(LoggerFactory.java:383)
+	at com.svw.avacar.apigateway.domain.TokenValidateList.<clinit>(TokenValidateList.java:14)
+	at sun.reflect.GeneratedSerializationConstructorAccessor8.newInstance(Unknown Source)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
+	at org.objenesis.instantiator.sun.SunReflectionFactoryInstantiator.newInstance(SunReflectionFactoryInstantiator.java:45)
+	at org.objenesis.ObjenesisBase.newInstance(ObjenesisBase.java:73)
+	at org.mockito.internal.creation.instance.ObjenesisInstantiator.newInstance(ObjenesisInstantiator.java:14)
+	at org.powermock.api.mockito.repackaged.ClassImposterizer.createProxy(ClassImposterizer.java:149)
+	at org.powermock.api.mockito.repackaged.ClassImposterizer.imposterise(ClassImposterizer.java:64)
+	at org.powermock.api.mockito.internal.mockcreation.DefaultMockCreator.createMethodInvocationControl(DefaultMockCreator.java:121)
+	at org.powermock.api.mockito.internal.mockcreation.DefaultMockCreator.createMock(DefaultMockCreator.java:69)
+	at org.powermock.api.mockito.internal.mockcreation.DefaultMockCreator.mock(DefaultMockCreator.java:46)
+	at org.powermock.api.mockito.PowerMockito.mock(PowerMockito.java:201)
+	at org.powermock.api.extension.listener.AnnotationEnabler.standardInject(AnnotationEnabler.java:118)
+	at org.powermock.api.extension.listener.AnnotationEnabler.beforeTestMethod(AnnotationEnabler.java:63)
+	at org.powermock.tests.utils.impl.PowerMockTestNotifierImpl.notifyBeforeTestMethod(PowerMockTestNotifierImpl.java:82)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit44RunnerDelegateImpl$PowerMockJUnit44MethodRunner.executeTest(PowerMockJUnit44RunnerDelegateImpl.java:308)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit47RunnerDelegateImpl$PowerMockJUnit47MethodRunner.executeTestInSuper(PowerMockJUnit47RunnerDelegateImpl.java:131)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit47RunnerDelegateImpl$PowerMockJUnit47MethodRunner.access$100(PowerMockJUnit47RunnerDelegateImpl.java:59)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit47RunnerDelegateImpl$PowerMockJUnit47MethodRunner$TestExecutorStatement.evaluate(PowerMockJUnit47RunnerDelegateImpl.java:147)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit47RunnerDelegateImpl$PowerMockJUnit47MethodRunner.evaluateStatement(PowerMockJUnit47RunnerDelegateImpl.java:107)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit47RunnerDelegateImpl$PowerMockJUnit47MethodRunner.executeTest(PowerMockJUnit47RunnerDelegateImpl.java:82)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit44RunnerDelegateImpl$PowerMockJUnit44MethodRunner.runBeforesThenTestThenAfters(PowerMockJUnit44RunnerDelegateImpl.java:298)
+	at org.junit.internal.runners.MethodRoadie.runTest(MethodRoadie.java:87)
+	at org.junit.internal.runners.MethodRoadie.run(MethodRoadie.java:50)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit44RunnerDelegateImpl.invokeTestMethod(PowerMockJUnit44RunnerDelegateImpl.java:218)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit44RunnerDelegateImpl.runMethods(PowerMockJUnit44RunnerDelegateImpl.java:160)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit44RunnerDelegateImpl$1.run(PowerMockJUnit44RunnerDelegateImpl.java:134)
+	at org.junit.internal.runners.ClassRoadie.runUnprotected(ClassRoadie.java:34)
+	at org.junit.internal.runners.ClassRoadie.runProtected(ClassRoadie.java:44)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit44RunnerDelegateImpl.run(PowerMockJUnit44RunnerDelegateImpl.java:136)
+	at org.powermock.modules.junit4.common.internal.impl.JUnit4TestSuiteChunkerImpl.run(JUnit4TestSuiteChunkerImpl.java:121)
+	at org.powermock.modules.junit4.common.internal.impl.AbstractCommonPowerMockRunner.run(AbstractCommonPowerMockRunner.java:57)
+	at org.powermock.modules.junit4.PowerMockRunner.run(PowerMockRunner.java:59)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.execute(JUnit4Provider.java:283)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeWithRerun(JUnit4Provider.java:173)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:153)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:128)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:203)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:155)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.765 sec - in com.svw.avacar.apigateway.filters.PreRequestLogFilterTest
+Running com.svw.avacar.apigateway.filters.PreTokenAuthenticationFilterTest
+2020-04-01 10:06:22,556 main ERROR Could not reconfigure JMX java.lang.LinkageError: loader constraint violation: loader (instance of org/powermock/core/classloader/MockClassLoader) previously initiated loading for a different type with name "javax/management/MBeanServer"
+	at java.lang.ClassLoader.defineClass1(Native Method)
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:763)
+	at org.powermock.core.classloader.MockClassLoader.loadUnmockedClass(MockClassLoader.java:262)
+	at org.powermock.core.classloader.MockClassLoader.loadModifiedClass(MockClassLoader.java:206)
+	at org.powermock.core.classloader.DeferSupportingClassLoader.loadClass1(DeferSupportingClassLoader.java:89)
+	at org.powermock.core.classloader.DeferSupportingClassLoader.loadClass(DeferSupportingClassLoader.java:79)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	at org.apache.logging.log4j.core.jmx.Server.unregisterAllMatching(Server.java:335)
+	at org.apache.logging.log4j.core.jmx.Server.unregisterLoggerContext(Server.java:259)
+	at org.apache.logging.log4j.core.jmx.Server.reregisterMBeansAfterReconfigure(Server.java:164)
+	at org.apache.logging.log4j.core.jmx.Server.reregisterMBeansAfterReconfigure(Server.java:140)
+	at org.apache.logging.log4j.core.LoggerContext.setConfiguration(LoggerContext.java:541)
+	at org.apache.logging.log4j.core.LoggerContext.reconfigure(LoggerContext.java:603)
+	at org.apache.logging.log4j.core.LoggerContext.reconfigure(LoggerContext.java:620)
+	at org.apache.logging.log4j.core.LoggerContext.start(LoggerContext.java:226)
+	at org.apache.logging.log4j.core.impl.Log4jContextFactory.getContext(Log4jContextFactory.java:152)
+	at org.apache.logging.log4j.core.impl.Log4jContextFactory.getContext(Log4jContextFactory.java:45)
+	at org.apache.logging.log4j.LogManager.getContext(LogManager.java:194)
+	at org.apache.logging.log4j.spi.AbstractLoggerAdapter.getContext(AbstractLoggerAdapter.java:103)
+	at org.apache.logging.slf4j.Log4jLoggerFactory.getContext(Log4jLoggerFactory.java:43)
+	at org.apache.logging.log4j.spi.AbstractLoggerAdapter.getLogger(AbstractLoggerAdapter.java:42)
+	at org.apache.logging.slf4j.Log4jLoggerFactory.getLogger(Log4jLoggerFactory.java:29)
+	at org.slf4j.LoggerFactory.getLogger(LoggerFactory.java:358)
+	at org.slf4j.LoggerFactory.getLogger(LoggerFactory.java:383)
+	at com.svw.avacar.apigateway.domain.TokenValidateList.<clinit>(TokenValidateList.java:14)
+	at sun.reflect.GeneratedSerializationConstructorAccessor15.newInstance(Unknown Source)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
+	at org.objenesis.instantiator.sun.SunReflectionFactoryInstantiator.newInstance(SunReflectionFactoryInstantiator.java:45)
+	at org.objenesis.ObjenesisBase.newInstance(ObjenesisBase.java:73)
+	at org.mockito.internal.creation.instance.ObjenesisInstantiator.newInstance(ObjenesisInstantiator.java:14)
+	at org.powermock.api.mockito.repackaged.ClassImposterizer.createProxy(ClassImposterizer.java:149)
+	at org.powermock.api.mockito.repackaged.ClassImposterizer.imposterise(ClassImposterizer.java:64)
+	at org.powermock.api.mockito.internal.mockcreation.DefaultMockCreator.createMethodInvocationControl(DefaultMockCreator.java:121)
+	at org.powermock.api.mockito.internal.mockcreation.DefaultMockCreator.createMock(DefaultMockCreator.java:69)
+	at org.powermock.api.mockito.internal.mockcreation.DefaultMockCreator.mock(DefaultMockCreator.java:46)
+	at org.powermock.api.mockito.PowerMockito.mock(PowerMockito.java:201)
+	at org.powermock.api.extension.listener.AnnotationEnabler.standardInject(AnnotationEnabler.java:118)
+	at org.powermock.api.extension.listener.AnnotationEnabler.beforeTestMethod(AnnotationEnabler.java:63)
+	at org.powermock.tests.utils.impl.PowerMockTestNotifierImpl.notifyBeforeTestMethod(PowerMockTestNotifierImpl.java:82)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit44RunnerDelegateImpl$PowerMockJUnit44MethodRunner.executeTest(PowerMockJUnit44RunnerDelegateImpl.java:308)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit47RunnerDelegateImpl$PowerMockJUnit47MethodRunner.executeTestInSuper(PowerMockJUnit47RunnerDelegateImpl.java:131)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit47RunnerDelegateImpl$PowerMockJUnit47MethodRunner.access$100(PowerMockJUnit47RunnerDelegateImpl.java:59)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit47RunnerDelegateImpl$PowerMockJUnit47MethodRunner$TestExecutorStatement.evaluate(PowerMockJUnit47RunnerDelegateImpl.java:147)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit47RunnerDelegateImpl$PowerMockJUnit47MethodRunner.evaluateStatement(PowerMockJUnit47RunnerDelegateImpl.java:107)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit47RunnerDelegateImpl$PowerMockJUnit47MethodRunner.executeTest(PowerMockJUnit47RunnerDelegateImpl.java:82)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit44RunnerDelegateImpl$PowerMockJUnit44MethodRunner.runBeforesThenTestThenAfters(PowerMockJUnit44RunnerDelegateImpl.java:298)
+	at org.junit.internal.runners.MethodRoadie.runTest(MethodRoadie.java:87)
+	at org.junit.internal.runners.MethodRoadie.run(MethodRoadie.java:50)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit44RunnerDelegateImpl.invokeTestMethod(PowerMockJUnit44RunnerDelegateImpl.java:218)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit44RunnerDelegateImpl.runMethods(PowerMockJUnit44RunnerDelegateImpl.java:160)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit44RunnerDelegateImpl$1.run(PowerMockJUnit44RunnerDelegateImpl.java:134)
+	at org.junit.internal.runners.ClassRoadie.runUnprotected(ClassRoadie.java:34)
+	at org.junit.internal.runners.ClassRoadie.runProtected(ClassRoadie.java:44)
+	at org.powermock.modules.junit4.internal.impl.PowerMockJUnit44RunnerDelegateImpl.run(PowerMockJUnit44RunnerDelegateImpl.java:136)
+	at org.powermock.modules.junit4.common.internal.impl.JUnit4TestSuiteChunkerImpl.run(JUnit4TestSuiteChunkerImpl.java:121)
+	at org.powermock.modules.junit4.common.internal.impl.AbstractCommonPowerMockRunner.run(AbstractCommonPowerMockRunner.java:57)
+	at org.powermock.modules.junit4.PowerMockRunner.run(PowerMockRunner.java:59)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.execute(JUnit4Provider.java:283)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeWithRerun(JUnit4Provider.java:173)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:153)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:128)
+	at org.apache.maven.surefire.booter.ForkedBooter.invokeProviderInSameClassLoader(ForkedBooter.java:203)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:155)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:103)
+
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.238 sec - in com.svw.avacar.apigateway.filters.PreTokenAuthenticationFilterTest
+2020-04-01 10:06:23.504 [Thread-3] INFO  org.springframework.context.support.AbstractApplicationContext 984 doClose - Closing org.springframework.context.support.GenericApplicationContext@511936ad: startup date [Wed Apr 01 10:06:18 CST 2020]; root of context hierarchy
+2020-04-01 10:06:23,515 pool-2-thread-1 ERROR Unable to unregister MBeans java.lang.LinkageError: javax/management/MBeanServer
+	at org.apache.logging.log4j.core.jmx.Server.unregisterAllMatching(Server.java:335)
+	at org.apache.logging.log4j.core.jmx.Server.unregisterLoggerContext(Server.java:259)
+	at org.apache.logging.log4j.core.jmx.Server.unregisterLoggerContext(Server.java:247)
+	at org.apache.logging.log4j.core.LoggerContext.stop(LoggerContext.java:317)
+	at org.apache.logging.log4j.core.AbstractLifeCycle.stop(AbstractLifeCycle.java:127)
+	at org.apache.logging.log4j.core.LoggerContext$1.run(LoggerContext.java:275)
+	at org.apache.logging.log4j.core.util.DefaultShutdownCallbackRegistry$RegisteredCancellable.run(DefaultShutdownCallbackRegistry.java:104)
+	at org.apache.logging.log4j.core.util.DefaultShutdownCallbackRegistry.run(DefaultShutdownCallbackRegistry.java:74)
+	at java.lang.Thread.run(Thread.java:748)
+
+2020-04-01 10:06:23,515 pool-3-thread-1 ERROR Unable to unregister MBeans java.lang.LinkageError: javax/management/MBeanServer
+	at org.apache.logging.log4j.core.jmx.Server.unregisterAllMatching(Server.java:335)
+	at org.apache.logging.log4j.core.jmx.Server.unregisterLoggerContext(Server.java:259)
+	at org.apache.logging.log4j.core.jmx.Server.unregisterLoggerContext(Server.java:247)
+	at org.apache.logging.log4j.core.LoggerContext.stop(LoggerContext.java:317)
+	at org.apache.logging.log4j.core.AbstractLifeCycle.stop(AbstractLifeCycle.java:127)
+	at org.apache.logging.log4j.core.LoggerContext$1.run(LoggerContext.java:275)
+	at org.apache.logging.log4j.core.util.DefaultShutdownCallbackRegistry$RegisteredCancellable.run(DefaultShutdownCallbackRegistry.java:104)
+	at org.apache.logging.log4j.core.util.DefaultShutdownCallbackRegistry.run(DefaultShutdownCallbackRegistry.java:74)
+	at java.lang.Thread.run(Thread.java:748)
+
+
+Results :
+
+Tests run: 25, Failures: 0, Errors: 0, Skipped: 0
+
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - 
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - --- jacoco-maven-plugin:0.8.2:report (default-report) @ avacar-apigateway-v1 ---
+[main] INFO org.jacoco.maven.ReportMojo - Loading execution data file /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode/target/jacoco.exec
+[main] INFO org.jacoco.maven.ReportMojo - Analyzed bundle 'avacar-apigateway-v1' with 22 classes
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - 
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - --- maven-jar-plugin:2.6:jar (default-jar) @ avacar-apigateway-v1 ---
+[main] INFO org.codehaus.plexus.archiver.jar.JarArchiver - Building jar: /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode/target/avacar-apigateway-v1-0.0.2.jar
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - 
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - --- spring-boot-maven-plugin:1.5.8.RELEASE:repackage (default) @ avacar-apigateway-v1 ---
+[main] INFO org.jfrog.build.extractor.maven.BuildDeploymentHelper - Artifactory Build Info Recorder: deploy artifacts set to false, artifacts will not be deployed...
+[main] INFO org.jfrog.build.extractor.maven.BuildDeploymentHelper - Artifactory Build Info Recorder: publish build info set to false, build info will not be published...
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - ------------------------------------------------------------------------
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - BUILD SUCCESS
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - ------------------------------------------------------------------------
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - Total time: 26.722 s
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - Finished at: 2020-04-01T10:06:26+08:00
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - Final Memory: 60M/536M
+[main] INFO org.apache.maven.cli.event.ExecutionEventLogger - ------------------------------------------------------------------------
+[Pipeline] publishBuildInfo
+Deploying build info to: http://art.ocp.csvw.com/artifactory/api/build
+Deploying build descriptor to: http://art.ocp.csvw.com/artifactory/api/build
+Build successfully deployed. Browse it in Artifactory under http://art.ocp.csvw.com/artifactory/webapp/builds/AVACAR%20::%20ali-k8s-test%20::%20avacar-apigateway-v1/250
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (SonarQube)
+[Pipeline] readMavenPom
+[Pipeline] libraryResource
+[Pipeline] writeFile
+[Pipeline] tool
+[Pipeline] dir
+Running in /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode
+[Pipeline] {
+[Pipeline] sh
+[appCode] Running shell script
++ /opt/software/sonar-scanner-test/bin/sonar-scanner
+INFO: Scanner configuration file: /opt/software/sonar-scanner-test/conf/sonar-scanner.properties
+INFO: Project root configuration file: /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode/sonar-project.properties
+INFO: SonarQube Scanner 3.2.0.1227
+INFO: Java 1.8.0_121 Oracle Corporation (64-bit)
+INFO: Linux 3.10.0-693.1.1.el7.x86_64 amd64
+INFO: User cache: /root/.sonar/cache
+INFO: SonarQube server 7.2.0
+INFO: Default locale: "en_US", source code encoding: "UTF-8" (analysis is platform dependent)
+INFO: Publish mode
+INFO: Load global settings
+INFO: Load global settings (done) | time=90ms
+INFO: Server id: AWbDl9qmSlpGqoPFJ4TS
+INFO: User cache: /root/.sonar/cache
+INFO: Load/download plugins
+INFO: Load plugins index
+INFO: Load plugins index (done) | time=85ms
+INFO: Load/download plugins (done) | time=107ms
+INFO: Loaded core extensions: 
+INFO: Process project properties
+INFO: Load project repositories
+INFO: Load project repositories (done) | time=77ms
+INFO: Load quality profiles
+INFO: Load quality profiles (done) | time=26ms
+INFO: Load active rules
+INFO: Load active rules (done) | time=352ms
+INFO: Load metrics repository
+INFO: Load metrics repository (done) | time=28ms
+INFO: Project key: avacar-apigateway-v1
+INFO: Project base dir: /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode
+INFO: -------------  Scan avacar-apigateway-v1
+INFO: Load server rules
+INFO: Load server rules (done) | time=61ms
+INFO: Base dir: /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode
+INFO: Working dir: /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode/.scannerwork
+INFO: Source paths: src
+INFO: Source encoding: UTF-8, default locale: en_US
+INFO: Index files
+INFO: Excluded sources: 
+INFO:   src/test/**
+INFO:   src/main/resources/static/**
+INFO:   **/webservice/**
+INFO:   **/mq/**
+INFO:   **/vo/**
+INFO:   **/dto/**
+INFO:   **/entity/**
+INFO:   **/avro/**
+INFO: 25 files indexed
+INFO: 12 files ignored because of inclusion/exclusion patterns
+INFO: Quality profile for java: Sonar way
+INFO: Quality profile for xml: Sonar way
+INFO: Excluded sources for coverage: 
+INFO:   **/vo/**
+INFO:   **/config/**
+INFO:   **/entity/**
+INFO:   **/constant/**
+INFO:   **/dto/**
+INFO: Sensor JavaSquidSensor [java]
+INFO: Configured Java source version (sonar.java.source): none
+INFO: JavaClasspath initialization
+INFO: JavaClasspath initialization (done) | time=23ms
+INFO: JavaTestClasspath initialization
+INFO: JavaTestClasspath initialization (done) | time=0ms
+INFO: Java Main Files AST scan
+INFO: 21 source files to be analyzed
+INFO: Java Main Files AST scan (done) | time=1829ms
+INFO: Java Test Files AST scan
+INFO: 0 source files to be analyzed
+INFO: Java Test Files AST scan (done) | time=0ms
+INFO: 0/0 source files have been analyzed
+INFO: Sensor JavaSquidSensor [java] (done) | time=2538ms
+INFO: Sensor SurefireSensor [java]
+INFO: 21/21 source files have been analyzed
+INFO: parsing [/var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode/target/surefire-reports]
+INFO: Sensor SurefireSensor [java] (done) | time=92ms
+INFO: Sensor JaCoCoSensor [java]
+INFO: Analysing /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode/target/jacoco.exec
+WARN: The following class(es) did not match with execution data:
+WARN: > 'com/svw/avacar/apigateway/filters/PreTokenAuthenticationFilterTest'
+WARN: > 'com/svw/avacar/apigateway/filters/PreRequestLogFilterTest'
+WARN: > 'com/svw/avacar/apigateway/config/BaseTest'
+WARN: In order to have accurate coverage measures, the same class files must be used as at runtime for report generation.
+INFO: No information about coverage per test.
+INFO: Sensor JaCoCoSensor [java] (done) | time=110ms
+INFO: Sensor SonarJavaXmlFileSensor [java]
+INFO: 1 source files to be analyzed
+INFO: Sensor SonarJavaXmlFileSensor [java] (done) | time=50ms
+INFO: 1/1 source files have been analyzed
+INFO: Sensor XML Sensor [xml]
+INFO: Sensor XML Sensor [xml] (done) | time=112ms
+INFO: Sensor Zero Coverage Sensor
+INFO: Sensor Zero Coverage Sensor (done) | time=27ms
+INFO: Sensor CPD Block Indexer
+INFO: Copy-paste detection exclusions:
+  **/vo/**
+  **/dto/**
+  **/entity/**
+INFO: Sensor CPD Block Indexer (done) | time=47ms
+INFO: 12 files had no CPD blocks
+INFO: Calculating CPD for 9 files
+INFO: CPD calculation finished
+INFO: Analysis report generated in 237ms, dir size=104 KB
+INFO: Analysis reports compressed in 51ms, zip size=59 KB
+INFO: Analysis report uploaded in 47ms
+INFO: ANALYSIS SUCCESSFUL, you can browse http://10.122.70.71:8000/sonar/dashboard?id=avacar-apigateway-v1
+INFO: Note that you will be able to access the updated dashboard once the server has processed the submitted analysis report
+INFO: More about the report processing at http://10.122.70.71:8000/sonar/api/ce/task?id=AXEzdXaoSlpGqoPFJ-pO
+INFO: Task total time: 5.801 s
+INFO: ------------------------------------------------------------------------
+INFO: EXECUTION SUCCESS
+INFO: ------------------------------------------------------------------------
+INFO: Total time: 7.248s
+INFO: Final Memory: 16M/380M
+INFO: ------------------------------------------------------------------------
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] sleep
+Sleeping for 10 sec
+[Pipeline] stage
+[Pipeline] { (Check sonar Result)
+[Pipeline] echo
+----------------------SonarResult开始check!----------------------
+[Pipeline] httpRequest
+HttpMethod: GET
+URL: http://10.122.70.71:8000/sonar/api/measures/component?metricKeys=bugs,coverage,vulnerabilities,code_smells&componentKey=avacar-apigateway-v1
+Accept: application/json
+Using authentication: sonar-admin
+Sending request to url: http://10.122.70.71:8000/sonar/api/measures/component?metricKeys=bugs,coverage,vulnerabilities,code_smells&componentKey=avacar-apigateway-v1
+Response Code: HTTP/1.1 200 
+Response: 
+{"component":{"id":"AW291rxLSlpGqoPFJ7I1","key":"avacar-apigateway-v1","name":"avacar-apigateway-v1","qualifier":"TRK","measures":[{"metric":"code_smells","value":"8","periods":[{"index":1,"value":"0","bestValue":true}],"bestValue":false},{"metric":"vulnerabilities","value":"0","periods":[{"index":1,"value":"0","bestValue":true}],"bestValue":true},{"metric":"bugs","value":"0","periods":[{"index":1,"value":"0","bestValue":true}],"bestValue":true},{"metric":"coverage","value":"82.0","periods":[{"index":1,"value":"0.0","bestValue":false}],"bestValue":false}]}}
+Success code from [100‥399]
+Saving response body to /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/sonar_checkresult.json
+[Pipeline] readJSON
+[Pipeline] echo
+Code Smell OK
+[Pipeline] echo
+Vulnerabilities OK
+[Pipeline] echo
+Not Found Bug
+[Pipeline] echo
+Coverage OK
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build Image)
+[Pipeline] echo
+Your input for stage_buildJavaImage is [envName:test, infraType:ali-k8s, appVersion:0.17.4].
+[Pipeline] readMavenPom
+[Pipeline] libraryResource
+[Pipeline] writeFile
+[Pipeline] sh
+[avacar-apigateway-v1] Running shell script
++ mv ./appCode/target/avacar-apigateway-v1-0.0.2.jar ./appCode/temp.jar
+[Pipeline] dir
+Running in /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appCode
+[Pipeline] {
+[Pipeline] withDockerRegistry
+$ docker login -u svwcloud -p ******** https://registry.cn-shanghai.aliyuncs.com
+Login Succeeded
+[Pipeline] {
+[Pipeline] sh
+[appCode] Running shell script
++ docker build -t registry.cn-shanghai.aliyuncs.com/svw-avacar/avacar-apigateway-v1:0.17.4 .
+Sending build context to Docker daemon 557.1 kB
+Sending build context to Docker daemon 1.114 MB
+Sending build context to Docker daemon 1.671 MB
+Sending build context to Docker daemon 2.228 MB
+Sending build context to Docker daemon 2.785 MB
+Sending build context to Docker daemon 3.342 MB
+Sending build context to Docker daemon 3.899 MB
+Sending build context to Docker daemon 4.456 MB
+Sending build context to Docker daemon 5.014 MB
+Sending build context to Docker daemon 5.571 MB
+Sending build context to Docker daemon 6.128 MB
+Sending build context to Docker daemon 6.685 MB
+Sending build context to Docker daemon 7.242 MB
+Sending build context to Docker daemon 7.799 MB
+Sending build context to Docker daemon 8.356 MB
+Sending build context to Docker daemon 8.913 MB
+Sending build context to Docker daemon  9.47 MB
+Sending build context to Docker daemon 10.03 MB
+Sending build context to Docker daemon 10.58 MB
+Sending build context to Docker daemon 11.14 MB
+Sending build context to Docker daemon  11.7 MB
+Sending build context to Docker daemon 12.26 MB
+Sending build context to Docker daemon 12.81 MB
+Sending build context to Docker daemon 13.37 MB
+Sending build context to Docker daemon 13.93 MB
+Sending build context to Docker daemon 14.48 MB
+Sending build context to Docker daemon 15.04 MB
+Sending build context to Docker daemon  15.6 MB
+Sending build context to Docker daemon 16.15 MB
+Sending build context to Docker daemon 16.71 MB
+Sending build context to Docker daemon 17.27 MB
+Sending build context to Docker daemon 17.83 MB
+Sending build context to Docker daemon 18.38 MB
+Sending build context to Docker daemon 18.94 MB
+Sending build context to Docker daemon  19.5 MB
+Sending build context to Docker daemon 20.05 MB
+Sending build context to Docker daemon 20.61 MB
+Sending build context to Docker daemon 21.17 MB
+Sending build context to Docker daemon 21.73 MB
+Sending build context to Docker daemon 22.28 MB
+Sending build context to Docker daemon 22.84 MB
+Sending build context to Docker daemon  23.4 MB
+Sending build context to Docker daemon 23.95 MB
+Sending build context to Docker daemon 24.51 MB
+Sending build context to Docker daemon 25.07 MB
+Sending build context to Docker daemon 25.62 MB
+Sending build context to Docker daemon 26.18 MB
+Sending build context to Docker daemon 26.74 MB
+Sending build context to Docker daemon  27.3 MB
+Sending build context to Docker daemon 27.85 MB
+Sending build context to Docker daemon 28.41 MB
+Sending build context to Docker daemon 28.97 MB
+Sending build context to Docker daemon 29.52 MB
+Sending build context to Docker daemon 30.08 MB
+Sending build context to Docker daemon 30.64 MB
+Sending build context to Docker daemon  31.2 MB
+Sending build context to Docker daemon 31.75 MB
+Sending build context to Docker daemon 32.31 MB
+Sending build context to Docker daemon 32.87 MB
+Sending build context to Docker daemon 33.42 MB
+Sending build context to Docker daemon 33.98 MB
+Sending build context to Docker daemon 34.54 MB
+Sending build context to Docker daemon 35.09 MB
+Sending build context to Docker daemon 35.65 MB
+Sending build context to Docker daemon 36.21 MB
+Sending build context to Docker daemon 36.77 MB
+Sending build context to Docker daemon 37.32 MB
+Sending build context to Docker daemon 37.88 MB
+Sending build context to Docker daemon 38.44 MB
+Sending build context to Docker daemon 38.99 MB
+Sending build context to Docker daemon 39.55 MB
+Sending build context to Docker daemon 40.11 MB
+Sending build context to Docker daemon 40.67 MB
+Sending build context to Docker daemon 41.22 MB
+Sending build context to Docker daemon 41.78 MB
+Sending build context to Docker daemon 42.34 MB
+Sending build context to Docker daemon 42.89 MB
+Sending build context to Docker daemon 43.45 MB
+Sending build context to Docker daemon 44.01 MB
+Sending build context to Docker daemon 44.56 MB
+Sending build context to Docker daemon 45.12 MB
+Sending build context to Docker daemon 45.68 MB
+Sending build context to Docker daemon 46.24 MB
+Sending build context to Docker daemon 46.79 MB
+Sending build context to Docker daemon 47.35 MB
+Sending build context to Docker daemon 47.91 MB
+Sending build context to Docker daemon 48.46 MB
+Sending build context to Docker daemon 49.02 MB
+Sending build context to Docker daemon 49.58 MB
+Sending build context to Docker daemon 50.14 MB
+Sending build context to Docker daemon 50.69 MB
+Sending build context to Docker daemon 51.25 MB
+Sending build context to Docker daemon 51.81 MB
+Sending build context to Docker daemon 52.36 MB
+Sending build context to Docker daemon 52.92 MB
+Sending build context to Docker daemon 53.48 MB
+Sending build context to Docker daemon 54.03 MB
+Sending build context to Docker daemon 54.59 MB
+Sending build context to Docker daemon 55.15 MB
+Sending build context to Docker daemon 55.71 MB
+Sending build context to Docker daemon 56.26 MB
+Sending build context to Docker daemon 56.33 MB
+
+Step 1 : FROM docker-local.art.ocp.csvw.com/redhat-openjdk-18/openjdk18-openshift:1.3-9.0-sky
+ ---> 42d8cc17fd5c
+Step 2 : MAINTAINER Xu Erhu <xuerhu@csvw.com>
+ ---> Running in daaff6b4ce2e
+ ---> 1b56dd36a999
+Removing intermediate container daaff6b4ce2e
+Step 3 : USER root
+ ---> Running in c75ff489f665
+ ---> a0c081b8e4c0
+Removing intermediate container c75ff489f665
+Step 4 : VOLUME /tmp
+ ---> Running in 1b78354493e8
+ ---> 4fb22a73a664
+Removing intermediate container 1b78354493e8
+Step 5 : ENV TZ Asia/Shanghai
+ ---> Running in 379f8817e3e6
+ ---> 7affb2fb6e1f
+Removing intermediate container 379f8817e3e6
+Step 6 : RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+ ---> Running in e913c716ed25
+ ---> 0889bb2324bb
+Removing intermediate container e913c716ed25
+Step 7 : ADD temp.jar /deployments/app.jar
+ ---> ac54dc05b021
+Removing intermediate container 3a4e4861dee9
+Step 8 : RUN mkdir -p /deployments/heapdump /var/log/app &&     chmod +x -Rf /usr/local/s2i/* && chmod -R g=u /etc/passwd /var/log/app /home
+ ---> Running in 64687e36ba1c
+ ---> 1762d3b1c2ed
+Removing intermediate container 64687e36ba1c
+Step 9 : EXPOSE 1099
+ ---> Running in f49cc320b343
+ ---> 88702e4e1d82
+Removing intermediate container f49cc320b343
+Step 10 : USER 185
+ ---> Running in 9e15ce6e0848
+ ---> 124e0c0f7af2
+Removing intermediate container 9e15ce6e0848
+Step 11 : CMD /usr/local/s2i/run
+ ---> Running in 1ef307123bac
+ ---> d673ac0b722d
+Removing intermediate container 1ef307123bac
+Successfully built d673ac0b722d
+[Pipeline] sh
+[appCode] Running shell script
++ docker push registry.cn-shanghai.aliyuncs.com/svw-avacar/avacar-apigateway-v1:0.17.4
+The push refers to a repository [registry.cn-shanghai.aliyuncs.com/svw-avacar/avacar-apigateway-v1]
+3d246c1f35ea: Preparing
+225684b8cfe4: Preparing
+f46170371078: Preparing
+6f2d6ec656ce: Preparing
+c3747fdfbd10: Preparing
+3b4cedaab9af: Preparing
+2efb6c439bef: Preparing
+9696595f6b21: Preparing
+d6a4dd6ace1f: Preparing
+f4fa6c253d2f: Preparing
+2efb6c439bef: Waiting
+9696595f6b21: Waiting
+d6a4dd6ace1f: Waiting
+f4fa6c253d2f: Waiting
+3b4cedaab9af: Waiting
+c3747fdfbd10: Layer already exists
+6f2d6ec656ce: Layer already exists
+3b4cedaab9af: Layer already exists
+2efb6c439bef: Layer already exists
+9696595f6b21: Layer already exists
+d6a4dd6ace1f: Layer already exists
+f46170371078: Pushed
+3d246c1f35ea: Pushed
+f4fa6c253d2f: Layer already exists
+225684b8cfe4: Pushed
+0.17.4: digest: sha256:9c0bcfe745625fa238f7dbf9949ee4548084946de1e15e238b42015baf506606 size: 2419
+[Pipeline] sh
+[appCode] Running shell script
++ docker rmi registry.cn-shanghai.aliyuncs.com/svw-avacar/avacar-apigateway-v1:0.17.4
+Untagged: registry.cn-shanghai.aliyuncs.com/svw-avacar/avacar-apigateway-v1:0.17.4
+Untagged: registry.cn-shanghai.aliyuncs.com/svw-avacar/avacar-apigateway-v1@sha256:9c0bcfe745625fa238f7dbf9949ee4548084946de1e15e238b42015baf506606
+Deleted: sha256:d673ac0b722d416adba5202a09a7bdf696b3712a70b979a8fb322f43da2b2473
+Deleted: sha256:124e0c0f7af2dba0f1d5bf617eec4b86508ced218c2f56a7e1a45458bf22e095
+Deleted: sha256:88702e4e1d82c22fc4f10a11d25b8e01f60a335fd9d425f8caa8bd1655206b80
+Deleted: sha256:1762d3b1c2ed63418c43c3dd1fc5de06bc9a0d890d36691922b5423e2583129e
+Deleted: sha256:8eec22601696044e9745741722c995bcd696d6749c944860177888df69560c36
+Deleted: sha256:ac54dc05b0216013d6e599c216c9e530b52176979f66ef95749669eec799ead9
+Deleted: sha256:7518f6d99a42842649170f1197690836c9dbbb71be6616920a4e8eaace687d0a
+Deleted: sha256:0889bb2324bb42773d8e275e66332c68b1b3ef9aaa133fc70621425f01541ef8
+Deleted: sha256:ae5ede44f6d678c53d24709be316487757e23f66d7de5a0c13dcfa7e60bdfe14
+Deleted: sha256:7affb2fb6e1f41c739bba596ecc6cbe62f9199be50475fd4534e44636d839772
+Deleted: sha256:4fb22a73a66475cb2d01c563aa1941dd86c194f779fdc3d91a8ca054b40a8c8e
+Deleted: sha256:a0c081b8e4c02e97ff6e00ba06351f9b7e07e09fa48fdfb9127e07e3d21b979e
+Deleted: sha256:1b56dd36a999c2bffdcb1b8e9534207a2b2052137deba5a1fafd93d9d6312c70
+[Pipeline] }
+[Pipeline] // withDockerRegistry
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy to test)
+[Pipeline] echo
+Your input for stage_deployToContainerPlatform is :[productName:avacar, appName:avacar-apigateway-v1, infraType:ali-k8s, envName:test, branchOrTag:tag-0.17.4-UAT-K8S-20200320, appType:springboot, appVersion:0.17.4]
+[Pipeline] sh
+[avacar-apigateway-v1] Running shell script
++ kubectl get secret ali-registry -n avacar --context=kubernetes-admin/ali-k8s-test
++ awk '{print $1}'
++ grep ali-registry
++ wc -l
+[Pipeline] sh
+[avacar-apigateway-v1] Running shell script
++ ls -F /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appConf/master/configmap
++ grep /
+ls: cannot access /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appConf/master/configmap: No such file or directory
+[Pipeline] echo
+not found any folder in /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appConf/master/configmap
+[Pipeline] sh
+[avacar-apigateway-v1] Running shell script
++ ls -F /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appConf/master/secret
++ grep /
+ls: cannot access /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appConf/master/secret: No such file or directory
+[Pipeline] echo
+not found any folder in /var/jenkins/workspace/AVACAR/ali-k8s-test/avacar-apigateway-v1/appConf/master/secret
+[Pipeline] fileExists
+[Pipeline] echo
+========K8sCdOperation.deploy(): Running==========
+[Pipeline] libraryResource
+[Pipeline] readYaml
+[Pipeline] echo
+need not handle environment variables.
+[Pipeline] echo
+The generated Deployment Yaml is as follow:
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: avacar-apigateway-v1
+  labels: {k8s-app: avacar-apigateway-v1}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {k8s-app: avacar-apigateway-v1}
+  template:
+    metadata:
+      name: avacar-apigateway-v1
+      labels: {k8s-app: avacar-apigateway-v1}
+    spec:
+      containers:
+      - name: avacar-apigateway-v1
+        image: registry-vpc.cn-shanghai.aliyuncs.com/svw-avacar/avacar-apigateway-v1:0.17.4
+        readinessProbe:
+          failureThreshold: 5
+          httpGet: {path: /health, port: 8080, scheme: HTTP}
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        resources:
+          requests: {cpu: 500m, memory: 1Gi}
+          limits: {cpu: 2, memory: 3Gi}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        imagePullPolicy: Always
+        securityContext: {privileged: false}
+        volumeMounts:
+        - {mountPath: /tmp, name: tmp-volume-1}
+        env:
+        - {name: JAVA_OPTIONS, value: '-server -d64 -Xms2048m -Xmx2048m -Djava.security.egd=file:/dev/./urandom
+            -Dfile.encoding=utf-8 -Dspring.profiles.active=dev -Denv_test=hhhh -Dcom.sun.management.jmxremote
+            -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false
+            -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.port=1099
+            -Dcom.sun.management.jmxremote.rmi.port=1099 -Djava.rmi.server.hostname=127.0.0.1'}
+        - {name: security_user_name, value: avacar}
+        - {name: security_user_password, value: Admin@svwsc}
+        - {name: rabbitmq_host, value: 172.20.0.218}
+        - {name: rabbitmq_port, value: '5672'}
+        - {name: rabbitmq_username, value: rabbit}
+        - {name: rabbitmq_password, value: rabbit}
+        - {name: encrypt_keyStore_pwd, value: Admin@svwsc}
+        - {name: zuul_host_maxPerRouteConnections, value: '1000'}
+        - {name: zuul_host_maxTotalConnections, value: '2000'}
+        - {name: zuul_semaphore_maxSemaphores, value: '1000'}
+        - {name: GC_MAX_METASPACE_SIZE, value: '500'}
+        command: null
+      restartPolicy: Always
+      imagePullSecrets:
+      - {name: ali-registry}
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+      volumes:
+      - emptyDir: {}
+        name: tmp-volume-1
+      hostAliases: null
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: {maxUnavailable: 25%, maxSurge: 25%}
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+
+[Pipeline] writeFile
+[Pipeline] sh
+[avacar-apigateway-v1] Running shell script
++ kubectl get deploy avacar-apigateway-v1 -n avacar --context=kubernetes-admin/ali-k8s-test
++ awk '{print $1}'
++ grep avacar-apigateway-v1
++ wc -l
+[Pipeline] echo
+=========K8s中已存在此应用的Deployment，正在更新ing==========
+[Pipeline] sh
+[avacar-apigateway-v1] Running shell script
++ kubectl get deploy avacar-apigateway-v1 '--template={{.metadata.generation}}' -n avacar --context=kubernetes-admin/ali-k8s-test
+[Pipeline] echo
+Deployment generation before applying is 403
+[Pipeline] sh
+[avacar-apigateway-v1] Running shell script
++ kubectl apply -f appConf/deployment.yaml -n avacar --context=kubernetes-admin/ali-k8s-test
+[Pipeline] sh
+[avacar-apigateway-v1] Running shell script
++ kubectl get deploy avacar-apigateway-v1 '--template={{.metadata.generation}}' -n avacar --context=kubernetes-admin/ali-k8s-test
+[Pipeline] echo
+Deployment generation after applying is 403
+[Pipeline] sh
+[avacar-apigateway-v1] Running shell script
++ kubectl scale --replicas=0 deploy avacar-apigateway-v1 -n avacar --context=kubernetes-admin/ali-k8s-test
+deployment "avacar-apigateway-v1" scaled
+[Pipeline] sh
+[avacar-apigateway-v1] Running shell script
++ kubectl scale --replicas=1 deploy avacar-apigateway-v1 -n avacar --context=kubernetes-admin/ali-k8s-test
+deployment "avacar-apigateway-v1" scaled
+[Pipeline] echo
+=========更新此应用的DC成功==========
+[Pipeline] sh
+[avacar-apigateway-v1] Running shell script
++ kubectl get ingress avacar-apigateway-v1 -n avacar --context=kubernetes-admin/ali-k8s-test
++ awk '{print $1}'
++ grep avacar-apigateway-v1
++ wc -l
+[Pipeline] echo
+========K8sCdOperation.deploy(): End==========
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Notified JIRA that a build has completed.
+Finished: SUCCESS
