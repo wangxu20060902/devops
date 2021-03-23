@@ -1,0 +1,107 @@
+pipeline {
+    agent any
+    environment { 
+        app = 'tsp-app-v1'
+        cover = '60'
+        tempfile = 'docker'
+        host='hub.qoros.com'
+    }
+    options { 
+        buildDiscarder(logRotator(numToKeepStr: '10')) 
+        disableConcurrentBuilds()
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                 script {
+                    echo 'Building..'
+                    def gitUrl="https://gitlab.futuremove.cn/TSP-Qoros/${app}.git"
+				    echo "此次下载项目地址为：${gitUrl}"
+				    // git 通过 SSH 私钥、公钥认证
+				    checkout([$class: 'GitSCM', branches: [[name: '${branch}']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory' ]], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'ligang.tang', url: "${gitUrl}" ]]])
+				    echo 'check out code is OK'
+                 }
+                 echo 'check out code is OK'
+            }
+        }
+        stage('Junit'){
+            steps {
+                sh "mvn org.jacoco:jacoco-maven-plugin:prepare-agent -f  pom.xml  clean test jacoco:report -Dautoconfig.skip=true -Dmaven.test.skip=false -Dmaven.test.failure.ignore=true"
+	            junit 'target/surefire-reports/*.xml'
+	            jacoco changeBuildStatus: true, maximumLineCoverage:"20"
+	            jacoco(
+                  buildOverBuild: false,
+                  changeBuildStatus: true,
+                  classPattern: '**/target/classes/com',
+                  execPattern: '**/target/coverage-reports/jacoco-ut.exec',
+                  sourcePattern: '**/app',
+                  exclusionPattern: '**/repositories/**,**/ForecastDealListTopic*,**/RedisProxy,**/SqlProvider,**/javascript/**,**/Reverse*,**/routes*,**/*$*,**/RedisConnector,**/RedisProxy,**/RedisUtil*,**/dao/**,**/OAuthTokenVerification*,**/dbpool/**,**/module/**,**/modules/**',
+                  minimumMethodCoverage: "${cover}",
+                  maximumMethodCoverage: "${cover}",
+                  minimumClassCoverage: "${cover}",
+                  maximumClassCoverage: "${cover}",
+                  minimumLineCoverage: "${cover}",
+                  maximumLineCoverage: "${cover}"
+                )
+            }
+        }
+         stage('Build') {
+            steps {
+                echo 'Build..'
+                script {
+                    sh "mvn clean package -U -e -Dmaven.test.skip=true"
+                }   
+            }
+        }
+        stage('Deploy') {
+            steps {               
+                script {
+					echo 'Deploying....'
+					sh "rm -rf ${tempfile}"
+					sh "mkdir ${tempfile}"
+					sh "mv ./target/${app}.jar ${tempfile}"
+					sh "mv ./Dockerfile ${tempfile}"
+                    echo "----准备登录远程镜像仓库:----"
+                    withCredentials([usernamePassword(credentialsId: 'harbor', passwordVariable: 'password', usernameVariable: 'username')]){
+                        sh "docker login -u ${username} -p ${password} ${host}"
+                        echo "----删除镜像如下:----"
+                        sh "docker rmi ${host}/tsp-qoros-prod/${app}"
+                        echo "----制作镜像如下:----"
+                        sh "cd ${tempfile} && ls -all && docker build -t ${host}/tsp-qoros-prod/${app} ."
+                        echo "----推送镜像如下:----"
+                        echo "${host}/tsp-qoros-prod/${app}"
+                        sh "docker push ${host}/tsp-qoros-prod/${app}"
+                        echo "----推送镜像成功----"
+                    }
+                }
+            }
+        }
+        stage('Romote') {
+            steps {
+                echo 'Remoteing....'
+                script {
+                    def remote = [:]
+                    remote.name = "k8s-master"
+                    remote.host = "10.181.18.56"
+                    remote.allowAnyHosts = true
+            node {
+                withCredentials([usernamePassword(credentialsId: 'admin', passwordVariable: 'password', usernameVariable: 'username')])
+                    {
+                        remote.user = userName
+                        remote.password = password
+                        stage("Restart") {
+                                writeFile file: "${app}.sh", text: "sudo kubectl delete -f /opt/tsp-yaml/${app}-deployment.yaml;sleep 3;sudo kubectl apply -f /opt/tsp-yaml/${app}-deployment.yaml"
+                                echo "----登录远程服务器成功----"
+                                sshCommand remote: remote, command: 'for i in {1}; do echo -n \"Loop \$i \"; date ; sleep 1; done'
+                                sshPut remote: remote, from: "${app}.sh", into: '.'
+                                //sshGet remote: remote, from: "${app}.sh", into: "${app}.sh", override: true
+                                sshScript remote: remote, script: "${app}.sh"
+                                sshRemove remote: remote, path: "${app}.sh"
+                            }
+                        }
+                    }
+                }
+	        }
+        }
+    }
+}
