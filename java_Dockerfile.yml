@@ -1,0 +1,10 @@
+FROM 139.217.95.229:5000/apps/openjdk:8-jdk-alpine
+VOLUME /tmp
+ARG JAR_FILE
+COPY tsp-config-server-v1.jar app.jar
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN echo 'Asia/Shanghai' >/etc/timezone
+EXPOSE 7001
+EXPOSE 1099
+ENV CATALINA_OPTS="-server -d64 -Xms2048m -Xmx2048m -Dfile.encoding=utf-8 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.port=1099 -Dcom.sun.management.jmxremote.rmi.port=1099 -Djava.rmi.server.hostname=localhost -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseParallelOldGC -XX:MinHeapFreeRatio=10 -XX:MaxHeapFreeRatio=20 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MaxMetaspaceSize=500m -XX:ParallelGCThreads=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2 -XX:CICompilerCount=2 -XX:+ExitOnOutOfMemoryError"
+ENTRYPOINT java ${CATALINA_OPTS} -Djava.security.egd=file:/dev/./urandom -jar /app.jar
