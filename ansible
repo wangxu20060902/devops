@@ -12,7 +12,7 @@ vim /etc/ansible/ansible.cfg
 host_key_checking = False
 
 2.### OpenSSH连接优化,使用OpenSSH服务时，默认服务器端配置文件UseDNS=YES状态，该选项会导致服务器根据客户端的IP地址进行DNS PTR反向解析得到客户端的主机名，然后根据获取到的主机名进行DNS正向A记录查询，并验证该IP是否与原始IP一致。关闭DNS解析代码如下
- sed  -i  '/^GSSAPI/s/yes/no/g；/UseDNS/d；/Protocol/aUseDNS no' /etc/ssh/sshd_config
+ sed  -i  '/^GSSAPI/s/yes/no/g;/UseDNS/d;/Protocol/aUseDNS no' /etc/ssh/sshd_config
 systemctl reload sshd
  
 3.##SSH pipelining加速Ansible SSH pipelining是一个加速 Ansible 执行速度的简单方法，SSH pipelining 默认是关闭的
